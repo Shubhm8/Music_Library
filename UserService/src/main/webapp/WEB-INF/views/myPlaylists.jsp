@@ -108,11 +108,9 @@ h1{font-size:32px;font-weight:800;}
     white-space: nowrap;
 }
 .btn-create:hover { background:var(--accent-hover); transform: translateY(-2px); }
-
-/* Grid Layout */
+ 
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:20px;}
-
-/* Playlist Card Styling */
+ 
 .playlist-card{
     background:var(--surface); 
     border:1px solid var(--border); 
@@ -187,12 +185,10 @@ h1{font-size:32px;font-weight:800;}
     </div>
 </div>
 
-<script>
-//--- SAFE LOGIN CHECK (Fix redirect loop) ---
+<script> 
 const storedUser = localStorage.getItem("user");
 
-if (!storedUser) {
-    // clear invalid cookie to prevent infinite redirects
+if (!storedUser) { 
     document.cookie = "jwtToken=; path=/; max-age=0";
     window.location.href = "/login";
 }
@@ -332,8 +328,7 @@ if (!storedUser) {
             await fetch(API_URL + "/" + id, { method: 'DELETE', headers: { 'Authorization': 'Bearer ' + JWT_TOKEN } }); 
             loadPlaylists(); 
         } catch(e) { console.error(e); }
-    }
-
+    } 
     loadPlaylists();
 </script>
 </body>

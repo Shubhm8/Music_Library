@@ -129,8 +129,7 @@ input:focus{
 </head>
 
 <body>
-<script>
-    // clear any previous sessions
+<script> 
     localStorage.removeItem('user');  
     localStorage.removeItem('admin');  
     document.cookie = "jwtToken=; path=/; max-age=0";
@@ -167,7 +166,7 @@ input:focus{
 
 <script>
 document.getElementById('adminLoginForm').addEventListener('submit', async function(e) {
-    e.preventDefault(); // stop full-page refresh
+    e.preventDefault(); 
 
     const loginData = {
         userName: this.userName.value,
@@ -184,20 +183,12 @@ document.getElementById('adminLoginForm').addEventListener('submit', async funct
         });
 
         if (response.ok) {
-            const data = await response.json(); 
-
-            // token can come as "jwt" or "token"
-            const jwt = data.jwt || data.token;
-
-            // store admin object + jwt
+            const data = await response.json();  
+            const jwt = data.jwt || data.token; 
             const adminObj = data.admin || {};
             adminObj.jwt = jwt;
-            localStorage.setItem("admin", JSON.stringify(adminObj));
-
-            // VERY IMPORTANT: set cookie so Spring Security sees you as authenticated
-            document.cookie = "jwtToken=" + jwt + "; path=/; max-age=36000;";
-
-            // go to dashboard
+            localStorage.setItem("admin", JSON.stringify(adminObj)); 
+            document.cookie = "jwtToken=" + jwt + "; path=/; max-age=36000;"; 
             window.location.href = "/admin/dashboard";
         } else {
             const err = await response.text();

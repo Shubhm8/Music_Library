@@ -9,8 +9,7 @@
 <meta http-equiv="Pragma" content="no-cache" />
 <meta http-equiv="Expires" content="0" />
 
-<style>
-/* Modern Apple-Inspired Theme */
+<style> 
 :root{
     --bg:#F5F5F7;
     --surface:#FFFFFF;
@@ -32,8 +31,7 @@ body{
     padding-bottom: 60px;
     color: var(--text-primary);
 }
-
-/* Glassmorphism Navbar */
+ 
 .navbar{
     background: rgba(255, 255, 255, 0.85);
     backdrop-filter: blur(20px);
@@ -68,16 +66,14 @@ body{
 .logout-btn:hover{ transform: scale(1.02); opacity: 0.9; }
 
 .container{ max-width:1100px; margin:40px auto; padding:0 30px; }
-
-/* Welcome Section */
+ 
 .welcome-header {
     margin-bottom: 35px;
     animation: fadeDown 0.6s ease;
 }
 .welcome-header h3 { font-size: 32px; font-weight: 800; margin-bottom: 8px; }
 .welcome-header p { color: var(--text-secondary); font-size: 16px; }
-
-/* --- 1. STATS ROW --- */
+ 
 .stats-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -99,8 +95,7 @@ body{
 
 .stat-val { font-size: 42px; font-weight: 800; display: block; line-height: 1.1; margin-bottom: 5px; }
 .stat-label { font-size: 13px; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; }
-
-/* --- 2. ACTIONS SECTION --- */
+ 
 .section-title { font-size: 20px; font-weight: 700; margin-bottom: 20px; }
 
 .actions-section {
@@ -134,8 +129,7 @@ body{
 .action-text h4 { font-size: 17px; font-weight: 700; margin-bottom: 2px; margin-top: 0; }
 .action-text p { font-size: 13px; color: var(--text-secondary); margin: 0; }
 .action-arrow { color: #D1D1D6; font-weight: 800; font-size: 20px; }
-
-/* Animations */
+ 
 @keyframes fadeDown { from { opacity:0; transform:translateY(-10px); } to { opacity:1; transform:translateY(0); } }
 @keyframes fadeUp { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
 </style>
@@ -229,7 +223,7 @@ body{
         window.location.href='/admin/login';
     }
 
-    // 2. Fetch Data (Just the numbers, no charts)
+    // 2. Fetch Data 
     const SONGS_API = "http://localhost:8082/api/songs/all";
     const USERS_API = "http://localhost:8081/api/users/all"; 
 
@@ -262,10 +256,6 @@ body{
     }
 
     loadStats();
-</script>
-
-
-
-
+</script> 
 </body>
 </html>

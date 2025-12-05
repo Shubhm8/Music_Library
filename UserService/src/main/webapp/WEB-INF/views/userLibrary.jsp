@@ -4,11 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Music Library</title>
-<style>
-/* ============================================
-           🎵 APPLE MUSIC PREMIUM THEME
-   ============================================ */
-
+<style> 
 :root {
     --bg:#FAFAFA; 
     --surface:#FFFFFF; 
@@ -19,15 +15,10 @@
     --border:#E5E5EA; 
     --radius:14px; 
     --shadow:0 4px 14px rgba(0,0,0,0.08);
-}
-
-/* RESET */
+} 
 * { margin:0; padding:0; box-sizing:border-box; font-family:-apple-system,Inter,sans-serif; }
 body { background:var(--bg); color:var(--text-primary); min-height:100vh; padding-bottom:40px; }
-
-/* =====================================
-              NAVBAR
-   ===================================== */
+ 
 .navbar{
     height:64px;
     background:var(--surface);
@@ -49,36 +40,25 @@ body { background:var(--bg); color:var(--text-primary); min-height:100vh; paddin
     border-radius:8px;
     transition:0.2s;
 }
-.btn-nav:hover { background:var(--border); }
-
-/* =====================================
-                LAYOUT
-   ===================================== */
+.btn-nav:hover { background:var(--border); } 
 .container{ max-width:1300px; margin:30px auto; padding:0 20px; }
 .header-section { text-align:center; margin-bottom:30px; }
-.header-section h1 { font-size:32px; font-weight:800; }
-
-/* Search Bar */
+.header-section h1 { font-size:32px; font-weight:800; } 
 .search-input { 
     width:100%; max-width:600px; padding:14px 20px;
     border-radius:30px; border:1px solid var(--border);
     font-size:15px; box-shadow:var(--shadow);
 }
 .search-input:focus { border-color:var(--accent); transform:scale(1.01); }
-
-/* =====================================
-              GRID & CARD
-   ===================================== */
+ 
 .grid { 
     display:grid; 
     grid-template-columns:repeat(auto-fill,minmax(210px,1fr)); 
     gap:18px; 
-}
-
-/* ⭐ Compact Card */
+} 
 .card { 
     background:var(--surface);
-    padding:9px; /* reduced */
+    padding:9px;  
     border-radius:12px;
     border:1px solid var(--border);
     box-shadow:var(--shadow);
@@ -86,21 +66,18 @@ body { background:var(--bg); color:var(--text-primary); min-height:100vh; paddin
     flex-direction:column;
     cursor:pointer;
     transition:0.2s;
-    min-height:255px; /* compact height */
+    min-height:255px;  
 }
 .card:hover { transform:translateY(-6px); border-color:var(--accent); }
-
-/* Smaller Cover Image */
+ 
 .cover-img { 
     width:100%;
     aspect-ratio:1/1;
     border-radius:10px;
     object-fit:cover;
-    margin-bottom:7px; /* reduced */
+    margin-bottom:7px;  
     box-shadow:0 2px 6px rgba(0,0,0,0.1);
-}
-
-/* Compact Text */
+} 
 .title {
     font-size:14px;
     font-weight:700;
@@ -111,21 +88,17 @@ body { background:var(--bg); color:var(--text-primary); min-height:100vh; paddin
 }
 .artist { color:var(--text-secondary); font-size:11px; margin-bottom:1px; }
 .album-text { color:#86868b; font-size:10px; margin-bottom:6px; }
-
-/* =====================================
-         MINI PLAYER (Premium)
-   ===================================== */
+ 
 .player-row {
     display:flex; 
     align-items:center; 
     gap:7px;
     background:#F2F2F7;
-    padding:5px; /* reduced */
+    padding:5px;  
     border-radius:8px;
-    margin-bottom:7px; /* compact */
+    margin-bottom:7px;  
 }
-
-/* Premium Apple Music Play Button */
+ 
 .play-btn-mini {
     width:34px;
     height:34px;
@@ -150,8 +123,7 @@ body { background:var(--bg); color:var(--text-primary); min-height:100vh; paddin
     height:14px;
     fill:currentColor;
 }
-
-/* Slider */
+ 
 .progress-container { flex-grow:1; }
 .progress-slider {
     width:100%; height:4px;
@@ -165,12 +137,11 @@ body { background:var(--bg); color:var(--text-primary); min-height:100vh; paddin
     border-radius:50%;
     -webkit-appearance:none;
 }
-
-/* ADD TO PLAYLIST btn */
+ 
 .btn-add { 
     width:100%;
     margin-top:auto;
-    padding:7px; /* compact */
+    padding:7px; 
     border-radius:10px;
     border:1px solid var(--accent);
     color:var(--accent);
@@ -180,10 +151,7 @@ body { background:var(--bg); color:var(--text-primary); min-height:100vh; paddin
     cursor:pointer;
 }
 .btn-add:hover { background:var(--accent); color:white; }
-
-/* =====================================
-       MODAL (Add to Playlist)
-   ===================================== */
+ 
 .modal {
     display:none;
     position:fixed;
@@ -233,8 +201,7 @@ body { background:var(--bg); color:var(--text-primary); min-height:100vh; paddin
     background:#F8F8F8;
     margin-bottom:20px;
 }
-
-/* Modal Buttons */
+ 
 .modal-btns {
     display:flex;
     gap:12px;
@@ -265,24 +232,20 @@ body { background:var(--bg); color:var(--text-primary); min-height:100vh; paddin
     box-shadow:0 4px 14px rgba(255,45,85,0.32);
 }
 .btn-confirm:hover { background:var(--accent-hover); }
-
-/* Loading */
+ 
 .loading {
     text-align:center;
     padding:50px;
     font-size:18px;
     color:var(--text-secondary);
-}
-/* ► Fix spacing between Explore Songs → Search bar */
+} 
 .header-section h1 { 
     margin-bottom: 18px; 
 }
 
 .search-input {
     margin-top: 10px;
-}
-
-/* ► Add spacing between search bar → cards */
+} 
 .grid {
     margin-top: 25px;
 }
@@ -350,13 +313,11 @@ body { background:var(--bg); color:var(--text-primary); min-height:100vh; paddin
 
 <audio id="globalAudio"></audio>
 
-<script>
-    // --- CONFIGURATION ---
+<script> 
     const ADMIN_URL = "http://localhost:8082"; 
     const PLAYLIST_API = "http://localhost:8081/api/playlists"; 
     const SONGS_API = ADMIN_URL + "/api/songs/available"; 
-
-    // --- AUTH LOGIC ---
+ 
     var user = JSON.parse(localStorage.getItem('user'));
     if(!user || !user.userId) window.location.href = "/login";
 
@@ -365,8 +326,7 @@ body { background:var(--bg); color:var(--text-primary); min-height:100vh; paddin
     
     var allSongs = [];
     var selectedSongId = null;
-
-    // --- AUDIO PLAYER STATE ---
+ 
     var currentAudio = document.getElementById("globalAudio");
     var currentPlayingId = null; 
 
@@ -385,31 +345,22 @@ body { background:var(--bg); color:var(--text-primary); min-height:100vh; paddin
             document.getElementById("songGrid").innerHTML = "<div class='loading'>Failed to load library. Ensure Admin Service is running on Port 8082.</div>";
         }
     }
-
-    // --- HELPER TO FIX IMAGE URLS ---
-    // --- HELPER TO FIX IMAGE URLS ---
-    function getSafeImageUrl(path) {
-        // 1. Log what we are getting from the DB to the console (for debugging)
+ 
+    function getSafeImageUrl(path) { 
         console.log("Checking image path:", path);
-
-        // 2. If it's null, undefined, or empty -> Placeholder
+ 
         if (!path || path.trim() === "") {
             return "https://via.placeholder.com/300x300?text=Music";
         }
-
-        // 3. If it looks like the broken data "300x300..." -> Placeholder
-        // We convert to string just in case
+ 
         var strPath = String(path);
         if (strPath.indexOf("300x300") !== -1 || strPath.indexOf("No+Image") !== -1) {
              return "https://via.placeholder.com/300x300?text=Music";
-        }
-
-        // 4. If it's already a full web URL (starts with http) -> Use it as is
+        } 
         if (strPath.startsWith("http")) {
             return strPath;
         }
-
-        // 5. Otherwise, assume it's a file on your Admin Server
+ 
         var cleanPath = strPath.startsWith("/") ? strPath : "/" + strPath;
         return ADMIN_URL + cleanPath;
     }
@@ -427,11 +378,9 @@ body { background:var(--bg); color:var(--text-primary); min-height:100vh; paddin
             var s = songs[i];
             var id = s.libraryId; 
             var album = s.albumName ? s.albumName : "Single";
-
-            // USE THE SAFE IMAGE HELPER
+ 
             var imgSrc = getSafeImageUrl(s.imagePath);
-
-            // AUDIO PATH LOGIC
+ 
             var audioUrl = "#";
             if (s.audioPath && s.audioPath.trim() !== "") {
                 var cleanAudio = s.audioPath.startsWith("/") ? s.audioPath : "/" + s.audioPath;
@@ -445,8 +394,7 @@ body { background:var(--bg); color:var(--text-primary); min-height:100vh; paddin
             html += '<div class="title">' + s.songName + '</div>';
             html += '<div class="artist">' + s.singer + '</div>';
             html += '<div class="album-text">' + album + '</div>';
-
-            // --- PLAYER CONTROLS ---
+ 
             html += '<div class="player-row" onclick="event.stopPropagation()">';
             html +=     '<button id="btn-' + id + '" class="play-btn-mini" onclick="togglePlay(' + id + ', \'' + audioUrl + '\')">' + SVG_PLAY + '</button>';
             html +=     '<div class="progress-container">';
@@ -528,8 +476,7 @@ body { background:var(--bg); color:var(--text-primary); min-height:100vh; paddin
         });
         renderSongs(filtered);
     }
-
-    // --- DETAILS LOGIC ---
+ 
     function openDetails(songName) { 
         var song = allSongs.find(function(s) {
             return s.songName == songName;
@@ -542,8 +489,7 @@ body { background:var(--bg); color:var(--text-primary); min-height:100vh; paddin
         document.getElementById("dDirector").innerText = song.musicDirector || "-";
         document.getElementById("dDate").innerText = song.releaseDate || "-";
         document.getElementById("dType").innerText = song.songType || "Free";
-
-        // USE SAFE IMAGE HELPER
+ 
         var imgSrc = getSafeImageUrl(song.imagePath);
         
         var iconContainer = document.getElementById("dIconContainer");
@@ -559,9 +505,7 @@ body { background:var(--bg); color:var(--text-primary); min-height:100vh; paddin
 
     function closeDetailsModal() {
         document.getElementById("detailsModal").style.display = "none";
-    }
-
-    // --- PLAYLIST LOGIC ---
+    } 
     async function openAddModal(songId) {
         selectedSongId = songId;
         document.getElementById("playlistModal").style.display = "flex";
@@ -616,6 +560,5 @@ body { background:var(--bg); color:var(--text-primary); min-height:100vh; paddin
 
     loadLibrary();
 </script>
-
 </body>
 </html>

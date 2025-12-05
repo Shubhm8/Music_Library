@@ -71,8 +71,7 @@ td { padding: 18px 25px; border-bottom: 1px solid var(--border); font-size: 15px
 tr:last-child td { border-bottom: none; }
 .song-row { cursor: pointer; transition: 0.2s; }
 .song-row:hover { background-color: #F9F9F9; }
-
-/* In-list Play Button */
+ 
 .list-play-btn { width: 50px; text-align: center; }
 .list-play-btn svg {
     width: 28px; height: 28px; 
@@ -229,12 +228,10 @@ input[type=range]::-webkit-slider-thumb {
     </div>
 </div>
 
-<script>
-//--- SAFE LOGIN CHECK (Fix redirect loop) ---
+<script> 
 const storedUser = localStorage.getItem("user");
 
-if (!storedUser) {
-    // clear invalid cookie to prevent infinite redirects
+if (!storedUser) { 
     document.cookie = "jwtToken=; path=/; max-age=0";
     window.location.href = "/login";
 }

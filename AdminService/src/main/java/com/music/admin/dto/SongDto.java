@@ -3,11 +3,9 @@ package com.music.admin.dto;
 import java.time.LocalDate;
 
 public class SongDto {
-
-    // ✅ ADDED: Unique ID for the Play Button to work
+ 
     private Long libraryId;
-    
-    // ✅ ADDED: Image Path so your grey boxes show real images
+     
     private String imagePath; 
 
     private String songName;
@@ -19,9 +17,7 @@ public class SongDto {
     private String songStatus; 
     private String audioPath;
 
-    public SongDto() {}
-
-    // --- GETTERS AND SETTERS ---
+    public SongDto() {} 
 
     public Long getLibraryId() { return libraryId; }
     public void setLibraryId(Long libraryId) { this.libraryId = libraryId; }

@@ -5,11 +5,7 @@
 <meta charset="UTF-8">
 <title>Music Library - Home</title>
 
-<style>
-/* Global Design System 
-   Using CSS variables to maintain consistent Apple-style aesthetics 
-   across the application components.
-*/
+<style> 
 :root{
     --bg:#F5F5F7;
     --surface:#FFFFFF;
@@ -35,8 +31,7 @@ body{
     align-items:center;
     padding:25px;
 }
-
-/* Central Card Styling */
+ 
 .card{
     width:100%;
     max-width:480px;
@@ -45,8 +40,7 @@ body{
     border-radius:var(--radius);
     box-shadow:var(--shadow);
     border:1px solid var(--border);
-    text-align:center;
-    /* entry animation */
+    text-align:center; 
     animation:fade .6s ease; 
 }
 @keyframes fade{from{opacity:0;transform:translateY(18px);}to{opacity:1;transform:translateY(0);} }
@@ -84,9 +78,7 @@ p{
 .btn-primary:hover{
     background:var(--accent-hover);
     transform:translateY(-2px);
-}
-
-/* Distinct styling for Admin actions to prevent accidental clicks */
+} 
 .btn-danger{
     background:var(--danger);
     color:white;
@@ -96,8 +88,7 @@ p{
     transform:translateY(-2px);
 }
 </style>
-</head>
-
+</head> 
 <body>
  
 <div class="card">

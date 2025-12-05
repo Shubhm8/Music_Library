@@ -35,7 +35,7 @@ public class UserController {
     @Autowired
     private AuthenticationManager authenticationManager; // 👈 INJECT AUTH MANAGER
     
-    // Add User (Registration)
+    // Add User  
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody User user) {
         try {
@@ -116,7 +116,7 @@ public class UserController {
         }
     }
 
-    // Update User Status (Block/Unblock)
+    // Update User Status  
     @PutMapping("/status/{id}")
     public ResponseEntity<?> updateUserStatus(@PathVariable Integer id, @RequestParam String status) {
         try {

@@ -27,30 +27,17 @@ public class SecurityConfig {
     private JwtRequestFilter jwtRequestFilter;
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception { 
         http
                 .csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
-
-                        // ✔ allow JSP internal forward to avoid infinite redirect
                         .dispatcherTypeMatchers(DispatcherType.FORWARD).permitAll()
-                        .dispatcherTypeMatchers(DispatcherType.INCLUDE).permitAll()
-
-                        // ✔ allow static files
-                        .requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
-
-                        // ✔ allow public pages
-                        .requestMatchers("/", "/login", "/register").permitAll()
-
-                        // ✔ allow ALL REST APIs for Admin Service
-                        .requestMatchers("/api/users/**").permitAll()
-
-                        // ✔ allow swagger
-                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
-
-                        // ❗ everything else requires authentication
+                        .dispatcherTypeMatchers(DispatcherType.INCLUDE).permitAll() 
+                        .requestMatchers("/css/**", "/js/**", "/images/**").permitAll() 
+                        .requestMatchers("/", "/login", "/register").permitAll() 
+                        .requestMatchers("/api/users/**").permitAll() 
+                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll() 
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(ex -> ex
@@ -75,7 +62,6 @@ public class SecurityConfig {
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
-
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();

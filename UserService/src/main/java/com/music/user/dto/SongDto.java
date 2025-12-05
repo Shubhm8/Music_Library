@@ -2,11 +2,8 @@ package com.music.user.dto; // (Check package name for AdminService)
 
 import java.time.LocalDate;
 
-public class SongDto {
-
-    // --- ADD THIS NEW FIELD ---
-    private Long libraryId; 
-    // --------------------------
+public class SongDto { 
+    private Long libraryId;  
 
     private String songName;
     private String musicDirector;
@@ -16,11 +13,10 @@ public class SongDto {
     private String songType;
     private String songStatus;
     private String audioPath;
-    private String imagePath; // Ensure this is here too for images
+    private String imagePath;  
 
     public SongDto() {}
-
-    // --- ADD GETTERS AND SETTERS FOR libraryId ---
+ 
     public Long getLibraryId() { return libraryId; }
     public void setLibraryId(Long libraryId) { this.libraryId = libraryId; }
     // ---------------------------------------------

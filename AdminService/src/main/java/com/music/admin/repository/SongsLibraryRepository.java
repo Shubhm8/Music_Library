@@ -11,18 +11,16 @@ import java.util.List;
 @Repository
 public interface SongsLibraryRepository extends JpaRepository<SongsLibrary, Integer> {
 
-    // Existing filters
+  
     List<SongsLibrary> findBySongStatus(String songStatus);
     List<SongsLibrary> findBySongType(String songType);
     List<SongsLibrary> findBySongStatusAndSongType(String songStatus, String songType);
-
-    // Search by individual fields
+ 
     List<SongsLibrary> findBySongNameContainingIgnoreCase(String name);
     List<SongsLibrary> findBySingerContainingIgnoreCase(String singer);
     List<SongsLibrary> findByMusicDirectorContainingIgnoreCase(String director);
     List<SongsLibrary> findByAlbumNameContainingIgnoreCase(String album);
-
-    //  Search across multiple fields
+ 
     @Query("SELECT s FROM SongsLibrary s WHERE " +
            "LOWER(s.songName) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
            "LOWER(s.singer) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +

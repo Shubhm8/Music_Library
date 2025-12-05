@@ -32,14 +32,12 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
         String username = null;
         String jwt = null;
-
-        // 1. Read from Authorization header
+ 
         final String authorizationHeader = request.getHeader("Authorization");
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             jwt = authorizationHeader.substring(7);
         }
-
-        // 2. If not found, check cookies
+ 
         if (jwt == null && request.getCookies() != null) {
             for (Cookie cookie : request.getCookies()) {
                 if ("jwtToken".equals(cookie.getName())) {
@@ -48,8 +46,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 }
             }
         }
-
-        // 3. Extract username from JWT
+ 
         if (jwt != null) {
             try {
                 username = jwtUtil.extractUsername(jwt);
@@ -57,14 +54,12 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 System.out.println("JWT Parse Error: " + e.getMessage());
             }
         }
-
-        // ---- FIX REDIRECT LOOP ----
+ 
         if (username == null && jwt != null) {
             chain.doFilter(request, response);
             return;
         }
-
-        // 4. If valid token & user not authenticated yet
+ 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
 

@@ -1,7 +1,7 @@
 package com.music.admin.mapper;
 
-import com.music.admin.entity.SongsLibrary;
 import com.music.admin.dto.SongDto;
+import com.music.admin.entity.SongsLibrary;
 
 public class SongMapper {
 
@@ -10,9 +10,7 @@ public class SongMapper {
             return null;
         }
         
-        SongDto dto = new SongDto();
-
-        // ✅ FIXED: Convert Integer to Long using .longValue()
+        SongDto dto = new SongDto(); 
         if (entity.getLibraryId() != null) {
             dto.setLibraryId(entity.getLibraryId().longValue());
         }

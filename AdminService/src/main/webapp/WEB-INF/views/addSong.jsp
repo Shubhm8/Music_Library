@@ -69,8 +69,7 @@ select {
     transition: 0.2s;
     font-family: inherit;
 }
-
-/* Remove Number Arrows */
+ 
 input[type=number]::-webkit-inner-spin-button, 
 input[type=number]::-webkit-outer-spin-button { 
   -webkit-appearance: none; 
@@ -82,8 +81,7 @@ input:focus, select:focus {
     border-color: var(--accent); 
     background: #FFF;
 }
-
-/* Modern File Upload Styling */
+ 
 .file-upload-wrapper {
     position: relative;
     height: 120px;
@@ -103,11 +101,10 @@ input:focus, select:focus {
     border-color: var(--accent);
     background: #FFF0F3; 
 }
-
-/* Active state when file is selected */
+ 
 .file-upload-wrapper.has-file {
     border-style: solid;
-    border-color: #34C759; /* Green border */
+    border-color: #34C759;  
     background: #f0fdf4;
 }
 
@@ -248,11 +245,8 @@ input:focus, select:focus {
 <script>
     function updateFileName(input, textId, boxId) {
         var fileName = input.files[0] ? input.files[0].name : "Click to Upload";
-        
-        // Update the text inside the box
-        document.getElementById(textId).innerText = fileName;
-        
-        // Add a visual class to show it's done (green border)
+         
+        document.getElementById(textId).innerText = fileName; 
         var box = document.getElementById(boxId);
         if (input.files.length > 0) {
             box.classList.add("has-file");
@@ -260,7 +254,6 @@ input:focus, select:focus {
             box.classList.remove("has-file");
         }
     }
-</script>
-
+</script> 
 </body>
 </html>

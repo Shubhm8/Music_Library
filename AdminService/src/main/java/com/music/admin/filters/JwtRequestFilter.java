@@ -27,7 +27,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
         String path = request.getServletPath();
-        // Exclude login/register and static resources from filtering
+         
         return path.equals("/admin/login") ||
                path.equals("/admin/perform_login") ||
                path.equals("/api/admin/login") ||
@@ -48,14 +48,12 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
         String token = null;
         String username = null;
-
-        // 1) Try Authorization header (Bearer ...)
+ 
         final String authHeader = request.getHeader("Authorization");
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             token = authHeader.substring(7);
         }
-
-        // 2) Fallback to cookie (for older frontends)
+ 
         if (token == null && request.getCookies() != null) {
             for (Cookie cookie : request.getCookies()) {
                 if ("jwtToken".equals(cookie.getName())) {

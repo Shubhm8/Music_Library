@@ -144,12 +144,10 @@ input:focus{
 
 <body>
 
-<script>
-//--- SAFE LOGIN CHECK (Fix redirect loop) ---
+<script> 
 const storedUser = localStorage.getItem("user");
 
-if (!storedUser) {
-    // clear invalid cookie to prevent infinite redirects
+if (!storedUser) { 
     document.cookie = "jwtToken=; path=/; max-age=0";
     window.location.href = "/login";
 }

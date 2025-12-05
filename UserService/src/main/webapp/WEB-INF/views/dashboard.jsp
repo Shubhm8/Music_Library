@@ -148,8 +148,7 @@ p{ font-size:18px; color:var(--text-secondary); margin-bottom:40px; }
     </div>
 </div>
 
-<script>
-// --- SINGLE SAFE LOGIN CHECK ---
+<script> 
 const storedUser = localStorage.getItem("user");
 
 if (!storedUser) {
@@ -159,15 +158,13 @@ if (!storedUser) {
 
 const userObj = JSON.parse(storedUser);
 document.getElementById("userName").textContent = userObj.firstName || "User";
-
-// --- LOGOUT WORKING 100% ---
+ 
 function logout() {
     localStorage.removeItem("user");
     document.cookie = "jwtToken=; path=/; max-age=0";
     window.location.href = "/login";
 }
-
-// --- NOTIFICATION LOGIC ---
+ 
 const NOTIF_API = "http://localhost:8085/notify/recent"; 
 let latestNotificationId = 0;
 
@@ -227,10 +224,8 @@ window.onclick = function(event) {
     if (!event.target.closest('.notif-container')) {
         document.getElementById("notifList").style.display = "none";
     }
-}
-
+} 
 loadNotifications();
-</script>
-
+</script> 
 </body>
 </html>
