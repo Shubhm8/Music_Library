@@ -1,0 +1,37 @@
+package com.music.user.controller;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+
+@Controller  // NOT @RestController!
+public class UserViewController {
+    
+    // Home page
+    @GetMapping("/")
+    public String home() {
+        return "home";
+    }
+    
+    // User Registration Page
+    @GetMapping("/register")
+    public String registerPage() {
+        return "register";
+    }
+    
+    // User Login Page
+    @GetMapping("/login")
+    public String loginPage() {
+        return "login";
+    }
+    
+    // User Dashboard
+    @GetMapping("/dashboard")
+    public String dashboard() {
+        return "dashboard";
+    }
+    
+    @GetMapping("/users")  // ← ADD THIS IF MISSING
+    public String viewUsers() {
+        return "users";
+    }
+}

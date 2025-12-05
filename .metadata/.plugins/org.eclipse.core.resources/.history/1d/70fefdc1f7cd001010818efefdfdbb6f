@@ -1,0 +1,158 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>View Songs</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: Arial, sans-serif; 
+            background: #f5f5f5;
+        }
+        .navbar {
+            background: #f44336;
+            color: white;
+            padding: 15px 30px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 20px;
+        }
+        h2 { color: #f44336; margin-bottom: 20px; }
+        .back-btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #333;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .filter-buttons {
+            margin-bottom: 20px;
+        }
+        .filter-btn {
+            padding: 10px 20px;
+            margin: 5px;
+            background: #f44336;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .filter-btn:hover { background: #e91e63; }
+        .filter-btn.active { background: #e91e63; }
+        table {
+            width: 100%;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background: #f44336;
+            color: white;
+        }
+        tr:hover { background: #f5f5f5; }
+        .badge {
+            padding: 5px 10px;
+            border-radius: 3px;
+            font-size: 12px;
+        }
+        .badge-free { background: #4caf50; color: white; }
+        .badge-premium { background: #ff9800; color: white; }
+        .badge-available { background: #2196f3; color: white; }
+        .badge-not-available { background: #f44336; color: white; }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <h2>🎵 Music Library - All Songs</h2>
+    </div>
+    
+    <div class="container">
+        <a href="/admin/dashboard" class="back-btn">← Back to Dashboard</a>
+        
+        <h2>All Songs</h2>
+        
+        <div class="filter-buttons">
+            <button class="filter-btn active" onclick="loadSongs('all')">All Songs</button>
+            <button class="filter-btn" onclick="loadSongs('available')">Available Only</button>
+            <button class="filter-btn" onclick="loadSongs('free')">Free Songs</button>
+        </div>
+        
+        <table id="songsTable">
+            <thead>
+                <tr>
+                    <th>Song ID</th>
+                    <th>Song Name</th>
+                    <th>Singer</th>
+                    <th>Music Director</th>
+                    <th>Album</th>
+                    <th>Type</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody id="songsList">
+                <tr><td colspan="7" style="text-align: center;">Loading...</td></tr>
+            </tbody>
+        </table>
+    </div>
+    
+    <script>
+        async function loadSongs(type = 'all') {
+            let url = 'http://localhost:8082/api/songs/all';
+            
+            if (type === 'available') {
+                url = 'http://localhost:8082/api/songs/available';
+            } else if (type === 'free') {
+                url = 'http://localhost:8082/api/songs/free';
+            }
+            
+            // Update active button
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            try {
+                const response = await fetch(url);
+                const songs = await response.json();
+                
+                const tbody = document.getElementById('songsList');
+                
+                if (songs.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="7" style="text-align: center;">No songs found</td></tr>';
+                    return;
+                }
+                
+                tbody.innerHTML = songs.map(song => `
+                    <tr>
+                        <td>${song.songId}</td>
+                        <td>${song.songName}</td>
+                        <td>${song.singer || '-'}</td>
+                        <td>${song.musicDirector || '-'}</td>
+                        <td>${song.albumName || '-'}</td>
+                        <td><span class="badge badge-${song.songType.toLowerCase()}">${song.songType}</span></td>
+                        <td><span class="badge badge-${song.songStatus === 'AVAILABLE' ? 'available' : 'not-available'}">${song.songStatus}</span></td>
+                    </tr>
+                `).join('');
+                
+            } catch (error) {
+                document.getElementById('songsList').innerHTML = 
+                    '<tr><td colspan="7" style="text-align: center; color: red;">Error loading songs: ' + error.message + '</td></tr>';
+            }
+        }
+        
+        // Load all songs on page load
+        window.onload = () => loadSongs('all');
+    </script>
+</body>
+</html>

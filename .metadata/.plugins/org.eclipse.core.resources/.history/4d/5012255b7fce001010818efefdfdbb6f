@@ -1,0 +1,358 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>View All Users</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+        }
+        .navbar {
+            background: #f44336;
+            color: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .navbar h2 {
+            font-size: 24px;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 30px auto;
+            padding: 20px;
+        }
+        .back-btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #333;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            transition: background 0.3s ease;
+        }
+        .back-btn:hover {
+            background: #555;
+        }
+        .header-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        h2 { 
+            color: #f44336; 
+            font-size: 28px;
+        }
+        .stats {
+            background: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .stats span {
+            font-size: 18px;
+            font-weight: 600;
+            color: #f44336;
+        }
+        .search-box {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .search-box input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        .search-box input:focus {
+            outline: none;
+            border-color: #f44336;
+        }
+        .table-container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        th {
+            background: #f44336;
+            color: white;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        tbody tr {
+            transition: background 0.2s ease;
+        }
+        tbody tr:hover {
+            background: #fff3f3;
+        }
+        .badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+        }
+        .badge-active {
+            background: #4caf50;
+            color: white;
+        }
+        .badge-inactive {
+            background: #f44336;
+            color: white;
+        }
+        .loading {
+            text-align: center;
+            padding: 40px;
+            font-size: 18px;
+            color: #666;
+        }
+        .no-data {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+            font-size: 16px;
+        }
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #f5c6cb;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 5px;
+        }
+        .btn-small {
+            padding: 5px 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+        .btn-view {
+            background: #2196f3;
+            color: white;
+        }
+        .btn-view:hover {
+            background: #1976d2;
+        }
+        .btn-delete {
+            background: #f44336;
+            color: white;
+        }
+        .btn-delete:hover {
+            background: #d32f2f;
+        }
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            table {
+                font-size: 12px;
+            }
+            th, td {
+                padding: 10px 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <h2>🎵 Music Library - User Management</h2>
+    </div>
+    
+    <div class="container">
+        <a href="http://localhost:8082/admin/dashboard" class="back-btn">← Back to Dashboard</a>
+        
+        <div class="header-section">
+            <h2>All Registered Users</h2>
+            <div class="stats">
+                Total Users: <span id="totalUsers">0</span>
+            </div>
+        </div>
+        
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="🔍 Search by name, username, email, or city...">
+        </div>
+        
+        <div id="errorMessage" class="error-message" style="display: none;"></div>
+        
+        <div class="table-container">
+            <table id="usersTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>Mobile</th>
+                        <th>City</th>
+                        <th>State</th>
+                        <th>Country</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="usersList">
+                    <tr>
+                        <td colspan="10" class="loading">Loading users...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <script>
+        let allUsers = [];
+        
+        // Load users on page load
+        window.onload = () => loadUsers();
+        
+        // Search functionality
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            
+            const filteredUsers = allUsers.filter(user => {
+                return (
+                    user.firstName?.toLowerCase().includes(searchTerm) ||
+                    user.lastName?.toLowerCase().includes(searchTerm) ||
+                    user.userName?.toLowerCase().includes(searchTerm) ||
+                    user.email?.toLowerCase().includes(searchTerm) ||
+                    user.city?.toLowerCase().includes(searchTerm) ||
+                    user.state?.toLowerCase().includes(searchTerm) ||
+                    user.country?.toLowerCase().includes(searchTerm)
+                );
+            });
+            
+            displayUsers(filteredUsers);
+        });
+        
+        async function loadUsers() {
+            try {
+                const response = await fetch('http://localhost:8081/api/users/all');
+                
+                if (!response.ok) {
+                    throw new Error('Failed to fetch users');
+                }
+                
+                allUsers = await response.json();
+                displayUsers(allUsers);
+                
+                // Update total count
+                document.getElementById('totalUsers').textContent = allUsers.length;
+                
+            } catch (error) {
+                console.error('Error loading users:', error);
+                document.getElementById('errorMessage').textContent = 'Error loading users: ' + error.message;
+                document.getElementById('errorMessage').style.display = 'block';
+                
+                const tbody = document.getElementById('usersList');
+                tbody.innerHTML = '<tr><td colspan="10" class="no-data">Failed to load users. Please try again.</td></tr>';
+            }
+        }
+        
+        function displayUsers(users) {
+            const tbody = document.getElementById('usersList');
+            
+            if (users.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="10" class="no-data">No users found</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = users.map(user => `
+                <tr>
+                    <td>${user.userId}</td>
+                    <td>${user.firstName} ${user.lastName}</td>
+                    <td><strong>${user.userName}</strong></td>
+                    <td>${user.email}</td>
+                    <td>${user.mobile || '-'}</td>
+                    <td>${user.city || '-'}</td>
+                    <td>${user.state || '-'}</td>
+                    <td>${user.country || '-'}</td>
+                    <td><span class="badge badge-${user.status?.toLowerCase() === 'active' ? 'active' : 'inactive'}">${user.status || 'ACTIVE'}</span></td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn-small btn-view" onclick="viewUser(${user.userId})">View</button>
+                            <button class="btn-small btn-delete" onclick="deleteUser(${user.userId}, '${user.userName}')">Delete</button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+        
+        function viewUser(userId) {
+            // Find user details
+            const user = allUsers.find(u => u.userId === userId);
+            
+            if (user) {
+                let details = `
+                    User ID: ${user.userId}
+                    Name: ${user.firstName} ${user.lastName}
+                    Username: ${user.userName}
+                    Email: ${user.email}
+                    Mobile: ${user.mobile || 'N/A'}
+                    
+                    Address:
+                    ${user.address1 || 'N/A'}
+                    ${user.address2 || ''}
+                    ${user.city || 'N/A'}, ${user.state || 'N/A'} ${user.zipCode || ''}
+                    ${user.country || 'N/A'}
+                    
+                    Status: ${user.status || 'ACTIVE'}
+                    Created: ${user.createdAt ? new Date(user.createdAt).toLocaleString() : 'N/A'}
+                `;
+                
+                alert(details);
+            }
+        }
+        
+        async function deleteUser(userId, userName) {
+            if (!confirm(`Are you sure you want to delete user "${userName}"?`)) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`http://localhost:8081/api/users/${userId}`, {
+                    method: 'DELETE'
+                });
+                
+                if (response.ok) {
+                    alert('User deleted successfully!');
+                    loadUsers(); // Reload the list
+                } else {
+                    const error = await response.text();
+                    alert('Failed to delete user: ' + error);
+                }
+            } catch (error) {
+                alert('Error deleting user: ' + error.message);
+            }
+        }
+    </script>
+</body>
+</html>

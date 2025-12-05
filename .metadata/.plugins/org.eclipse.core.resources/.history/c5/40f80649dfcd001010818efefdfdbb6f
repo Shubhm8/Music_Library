@@ -1,0 +1,6 @@
+package com.music.user.entity;
+import javax.persistence.*;
+import java.time.LocalDateTime;
+public class User {
+
+}

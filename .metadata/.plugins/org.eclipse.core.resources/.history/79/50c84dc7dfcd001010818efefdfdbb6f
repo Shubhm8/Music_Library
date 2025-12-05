@@ -1,0 +1,68 @@
+package com.music.user.service;
+
+@Service
+public class UserService {
+    
+    @Autowired
+    private UserRepository userRepository;
+    
+    // Add User (Registration)
+    public User addUser(User user) {
+        if (userRepository.existsByUserName(user.getUserName())) {
+            throw new RuntimeException("Username already exists!");
+        }
+        if (userRepository.existsByEmail(user.getEmail())) {
+            throw new RuntimeException("Email already exists!");
+        }
+        return userRepository.save(user);
+    }
+    
+    // Show All Users
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
+    }
+    
+    // Get User by ID
+    public Optional<User> getUserById(Integer id) {
+        return userRepository.findById(id);
+    }
+    
+    // Login User
+    public User loginUser(String userName, String password) {
+        Optional<User> user = userRepository.findByUserName(userName);
+        
+        if (user.isPresent()) {
+            if (user.get().getPassword().equals(password)) {
+                return user.get();
+            } else {
+                throw new RuntimeException("Invalid password!");
+            }
+        } else {
+            throw new RuntimeException("User not found!");
+        }
+    }
+    
+    // Update User
+    public User updateUser(Integer id, User userDetails) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found!"));
+        
+        user.setFirstName(userDetails.getFirstName());
+        user.setLastName(userDetails.getLastName());
+        user.setEmail(userDetails.getEmail());
+        user.setMobile(userDetails.getMobile());
+        user.setAddress1(userDetails.getAddress1());
+        user.setAddress2(userDetails.getAddress2());
+        user.setCity(userDetails.getCity());
+        user.setState(userDetails.getState());
+        user.setZipCode(userDetails.getZipCode());
+        user.setCountry(userDetails.getCountry());
+        
+        return userRepository.save(user);
+    }
+    
+    // Delete User
+    public void deleteUser(Integer id) {
+        userRepository.deleteById(id);
+    }
+}

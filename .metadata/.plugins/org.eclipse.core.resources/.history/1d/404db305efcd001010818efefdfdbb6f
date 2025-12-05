@@ -1,0 +1,5 @@
+package com.music.admin.entity;
+
+public class SongsLibrary {
+
+}

@@ -1,0 +1,39 @@
+package com.music.admin.controller;
+
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+
+@Controller
+public class AdminViewController {
+    
+    // Admin Home page
+    @GetMapping("/")
+    public String home() {
+        return "home";
+    }
+    
+    // Admin Login Page
+    @GetMapping("/admin/login")
+    public String adminLoginPage() {
+        return "admin-login";
+    }
+    
+    // Admin Dashboard
+    @GetMapping("/admin/dashboard")
+    public String adminDashboard() {
+        return "admin-dashboard";
+    }
+    
+    // Add Song Page
+    @GetMapping("/admin/add-song")
+    public String addSongPage() {
+        return "add-song";
+    }
+    
+    // View Songs Page
+    @GetMapping("/admin/songs")
+    public String viewSongs() {
+        return "view-songs";
+    }
+}

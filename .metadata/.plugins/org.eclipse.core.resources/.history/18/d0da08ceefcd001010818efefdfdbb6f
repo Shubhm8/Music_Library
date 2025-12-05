@@ -1,0 +1,5 @@
+package com.music.admin.service;
+
+public class SongsService {
+
+}

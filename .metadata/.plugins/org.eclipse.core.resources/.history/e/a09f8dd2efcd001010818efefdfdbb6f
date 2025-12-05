@@ -1,0 +1,55 @@
+package com.music.admin.service;
+
+import com.musiclibrary.admin.entity.SongsLibrary;
+import com.musiclibrary.admin.repository.SongsLibraryRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import java.util.List;
+
+@Service
+public class SongsService {
+    
+    @Autowired
+    private SongsLibraryRepository songsRepository;
+    
+    // Add Song
+    public SongsLibrary addSong(SongsLibrary song) {
+        return songsRepository.save(song);
+    }
+    
+    // Show All Songs
+    public List<SongsLibrary> getAllSongs() {
+        return songsRepository.findAll();
+    }
+    
+    // Show Available Songs
+    public List<SongsLibrary> getAvailableSongs() {
+        return songsRepository.findBySongStatus("AVAILABLE");
+    }
+    
+    // Show Free Songs
+    public List<SongsLibrary> getFreeSongs() {
+        return songsRepository.findBySongStatusAndSongType("AVAILABLE", "FREE");
+    }
+    
+    // Update Song
+    public SongsLibrary updateSong(Integer id, SongsLibrary songDetails) {
+        SongsLibrary song = songsRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Song not found!"));
+        
+        song.setSongName(songDetails.getSongName());
+        song.setMusicDirector(songDetails.getMusicDirector());
+        song.setSinger(songDetails.getSinger());
+        song.setReleaseDate(songDetails.getReleaseDate());
+        song.setAlbumName(songDetails.getAlbumName());
+        song.setSongType(songDetails.getSongType());
+        song.setSongStatus(songDetails.getSongStatus());
+        
+        return songsRepository.save(song);
+    }
+    
+    // Delete Song
+    public void deleteSong(Integer id) {
+        songsRepository.deleteById(id);
+    }
+}
