@@ -84,16 +84,14 @@ public class SongsController {
     }
     
     @GetMapping("/admin/songs")
-    public String viewSongs(Model model) {
-        // NOTE: For Thymeleaf/JSP rendering, keeping the entity is usually necessary
+    public String viewSongs(Model model) { 
         List<SongsLibrary> songs = songsService.getAllSongs();
         model.addAttribute("songs", songs);
         return "viewSongs"; 
     }
     
     @GetMapping("/api/songs/all")
-    @ResponseBody
-    // CRITICAL FIX: Changed return type and added mapping
+    @ResponseBody 
     public List<SongDto> getAllSongsAPI() { 
         return songsService.getAllSongs().stream()
                            .map(SongMapper::toDto)
@@ -108,7 +106,7 @@ public class SongsController {
 
     @GetMapping("/api/songs/search")
     @ResponseBody
-    // CRITICAL FIX: Changed return type and added mapping
+    
     public List<SongDto> searchSongs(@RequestParam String keyword) {
         return songsService.searchSongs(keyword).stream()
                            .map(SongMapper::toDto)
@@ -127,7 +125,7 @@ public class SongsController {
                              @RequestParam(value = "file", required = false) MultipartFile audioFile,
                              @RequestParam(value = "imageFile", required = false) MultipartFile imageFile) {
         try {
-            // Check if a new Audio file is uploaded
+            
             if (audioFile != null && !audioFile.isEmpty()) {
                 String audioDir = "src/main/resources/static/audio";
                 Path audioPath = Paths.get(audioDir);
@@ -138,8 +136,7 @@ public class SongsController {
 
                 song.setAudioPath("/audio/" + audioName);
             }
-
-            // Check if a new Image file is uploaded
+ 
             if (imageFile != null && !imageFile.isEmpty()) {
                 String imgDir = "src/main/resources/static/images";
                 Path imgPath = Paths.get(imgDir);
@@ -159,8 +156,7 @@ public class SongsController {
     }
 
     @GetMapping("/api/songs/available")
-    @ResponseBody
-    // CRITICAL FIX: Changed return type and added mapping
+    @ResponseBody 
     public List<SongDto> getAvailableSongsAPI() {
         return songsService.getAvailableSongs().stream()
                            .map(SongMapper::toDto)

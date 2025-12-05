@@ -27,13 +27,10 @@ public class AdminController {
             String userName = loginData.get("userName");
             String password = loginData.get("password");
 
-            Admin admin = adminService.loginAdmin(userName, password);
-
-            // generate token
+            Admin admin = adminService.loginAdmin(userName, password); 
             String token = jwtUtil.generateToken(admin.getUserName());
 
-            Map<String, Object> response = new HashMap<>();
-            // keep both keys so frontend can use either
+            Map<String, Object> response = new HashMap<>(); 
             response.put("token", token);
             response.put("jwt", token);
             response.put("admin", admin);
