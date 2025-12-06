@@ -1,7 +1,10 @@
 package com.music.user.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.ArrayList;
 
 @Entity
 @Table(name = "users")
@@ -28,13 +31,9 @@ public class User {
     private String email;
     
     private String mobile;
-    
     private String address1;
-    
     private String address2;
-    
     private String city;
-    
     private String state;
     
     @Column(name = "zip_code")
@@ -50,6 +49,11 @@ public class User {
     
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+ 
+    @JsonIgnore
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Playlist> playlists = new ArrayList<>();
+    // ---------------------------------------------------------------
     
     @PrePersist
     protected void onCreate() {
@@ -64,6 +68,7 @@ public class User {
     
     public User() {}
 
+    // Getters and Setters
     public Integer getUserId() { return userId; }
     public void setUserId(Integer userId) { this.userId = userId; }
     
@@ -111,4 +116,8 @@ public class User {
     
     public LocalDateTime getUpdatedAt() { return updatedAt; }
     public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
+
+    // Getter and Setter for Playlists
+    public List<Playlist> getPlaylists() { return playlists; }
+    public void setPlaylists(List<Playlist> playlists) { this.playlists = playlists; }
 }

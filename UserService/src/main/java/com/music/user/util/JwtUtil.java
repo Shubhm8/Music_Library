@@ -19,7 +19,7 @@ public class JwtUtil {
 
     private static final String SECRET_STRING = "MySuperSecretKeyForMusicAppProject12345678";
     private final Key SECRET_KEY = Keys.hmacShaKeyFor(SECRET_STRING.getBytes(StandardCharsets.UTF_8));
-    private static final long EXPIRATION_TIME = 1000 * 60 * 60 * 10;
+    private static final long EXPIRATION_TIME = 1000L * 60 * 60 * 24 * 7;
 
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);

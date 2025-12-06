@@ -2,6 +2,7 @@ package com.music.user.config;
 
 import com.music.user.filters.JwtRequestFilter;
 import jakarta.servlet.DispatcherType;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -33,15 +34,26 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
                         .dispatcherTypeMatchers(DispatcherType.FORWARD).permitAll()
-                        .dispatcherTypeMatchers(DispatcherType.INCLUDE).permitAll() 
-                        .requestMatchers("/css/**", "/js/**", "/images/**").permitAll() 
-                        .requestMatchers("/", "/login", "/register").permitAll() 
+                        .dispatcherTypeMatchers(DispatcherType.INCLUDE).permitAll()
+                        .requestMatchers("/css/**", "/js/**", "/images/**", "/favicon.ico", "/webjars/**", "/audio/**").permitAll() 
+                        .requestMatchers("/", "/login", "/register", "/error").permitAll()
                         .requestMatchers("/api/users/**").permitAll() 
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll() 
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(ex -> ex
-                        .authenticationEntryPoint((req, res, e) -> res.sendRedirect("/login"))
+                    .authenticationEntryPoint((request, response, authException) -> {
+                        
+                        String acceptHeader = request.getHeader("Accept");
+                        boolean isPageRequest = acceptHeader != null && acceptHeader.contains("text/html");
+
+                        if (isPageRequest && !request.getRequestURI().startsWith("/api")) {
+                            response.sendRedirect("/login");
+                        } 
+                        else {
+                            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
+                        }
+                    })
                 )
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
@@ -62,6 +74,7 @@ public class SecurityConfig {
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
+
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
