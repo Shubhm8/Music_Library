@@ -53,7 +53,6 @@ public class User {
     @JsonIgnore
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Playlist> playlists = new ArrayList<>();
-    // ---------------------------------------------------------------
     
     @PrePersist
     protected void onCreate() {
