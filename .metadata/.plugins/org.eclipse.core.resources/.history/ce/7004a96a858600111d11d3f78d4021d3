@@ -1,0 +1,69 @@
+<script>
+    // Authentication
+    const storedData = localStorage.getItem("admin");
+
+    if (!storedData) {
+        window.location.href = "/admin/login";
+    }
+
+    const admin = JSON.parse(storedData);
+    document.getElementById("adminName").textContent =
+        admin.adminName || admin.userName || "Super Admin";
+
+    const JWT_TOKEN = admin.jwt;
+
+    function logout() {
+        localStorage.removeItem("admin");
+        document.cookie = "jwtToken=; path=/; max-age=0";
+        window.location.href = "/admin/login";
+    }
+
+    // APIs
+    const SONGS_API = "/api/songs/all";
+    const USERS_API = "http://192.168.1.52:8080/api/users/all";
+
+    async function loadStats() {
+        try {
+
+            const songsRes = await fetch(SONGS_API, {
+                headers: {
+                    "Authorization": "Bearer " + JWT_TOKEN
+                }
+            });
+
+            if (!songsRes.ok) {
+                throw new Error("Failed to load songs");
+            }
+
+            const songs = await songsRes.json();
+
+            document.getElementById("countSongs").textContent = songs.length;
+            document.getElementById("countPremium").textContent =
+                songs.filter(song => song.songType === "PREMIUM").length;
+
+            const usersRes = await fetch(USERS_API, {
+                headers: {
+                    "Authorization": "Bearer " + JWT_TOKEN
+                }
+            });
+
+            if (!usersRes.ok) {
+                throw new Error("Failed to load users");
+            }
+
+            const users = await usersRes.json();
+
+            const blockedUsers =
+                users.filter(user => user.status === "INACTIVE").length;
+
+            document.getElementById("countBlocked").textContent = blockedUsers;
+            document.getElementById("countUsers").textContent =
+                users.length - blockedUsers;
+
+        } catch (error) {
+            console.error("Dashboard Error:", error);
+        }
+    }
+
+    loadStats();
+</script>

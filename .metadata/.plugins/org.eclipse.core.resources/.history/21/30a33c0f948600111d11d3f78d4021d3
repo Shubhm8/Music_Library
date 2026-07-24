@@ -1,0 +1,669 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Add New Song</title>
+
+<style>
+.content-layout{
+
+display:grid;
+
+grid-template-columns:360px 1fr;
+
+gap:35px;
+
+margin-top:30px;
+
+align-items:start;
+
+}
+
+.left-panel{
+
+display:flex;
+
+flex-direction:column;
+
+gap:25px;
+
+}
+
+.right-panel{
+
+display:flex;
+
+flex-direction:column;
+
+}
+
+.card{
+
+background:#fff;
+
+border:1px solid #ECECEC;
+
+border-radius:22px;
+
+padding:22px;
+
+box-shadow:0 10px 25px rgba(0,0,0,.06);
+
+}
+
+.card h3{
+
+font-size:20px;
+
+margin-bottom:18px;
+
+font-weight:700;
+
+color:#1D1D1F;
+
+}
+
+.image-preview{
+
+height:260px;
+
+border:2px dashed #D7D7DC;
+
+border-radius:18px;
+
+background:#FAFAFC;
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+overflow:hidden;
+
+margin-bottom:18px;
+
+transition:.3s;
+
+}
+
+.image-preview img{
+
+width:100%;
+
+height:100%;
+
+object-fit:cover;
+
+}
+
+.audio-preview{
+
+height:170px;
+
+border:2px dashed #D7D7DC;
+
+border-radius:18px;
+
+background:#FAFAFC;
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+margin-bottom:18px;
+
+transition:.3s;
+
+}
+
+.placeholder{
+
+text-align:center;
+
+}
+
+.placeholder-icon{
+
+font-size:46px;
+
+margin-bottom:12px;
+
+}
+
+.placeholder p{
+
+color:#86868B;
+
+font-size:15px;
+
+}
+
+.upload-btn{
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+height:52px;
+
+border-radius:14px;
+
+background:linear-gradient(135deg,#0A84FF,#5E5CE6);
+
+color:white;
+
+font-weight:700;
+
+cursor:pointer;
+
+transition:.25s;
+
+}
+
+.upload-btn:hover{
+
+transform:translateY(-2px);
+
+box-shadow:0 12px 30px rgba(10,132,255,.25);
+
+}
+
+.form-grid{
+
+display:grid;
+
+grid-template-columns:repeat(2,1fr);
+
+gap:22px;
+
+}
+
+.form-group{
+
+display:flex;
+
+flex-direction:column;
+
+}
+
+.form-group label{
+
+font-weight:700;
+
+margin-bottom:8px;
+
+font-size:14px;
+
+color:#1D1D1F;
+
+}
+
+.form-group input,
+.form-group select{
+
+height:54px;
+
+padding:0 16px;
+
+border-radius:14px;
+
+border:1.5px solid #E5E5EA;
+
+background:#FAFAFC;
+
+font-size:15px;
+
+transition:.25s;
+
+}
+
+.form-group input:focus,
+.form-group select:focus{
+
+outline:none;
+
+border-color:#0A84FF;
+
+background:white;
+
+box-shadow:0 0 0 4px rgba(10,132,255,.08);
+
+}
+
+.button-row{
+
+display:flex;
+
+justify-content:flex-end;
+
+gap:16px;
+
+margin-top:35px;
+
+}
+
+.cancel-btn{
+
+padding:14px 28px;
+
+background:#ECECEC;
+
+border-radius:14px;
+
+text-decoration:none;
+
+font-weight:700;
+
+color:#333;
+
+transition:.25s;
+
+}
+
+.cancel-btn:hover{
+
+background:#DDD;
+
+}
+
+.submit-btn{
+
+padding:14px 32px;
+
+border:none;
+
+border-radius:14px;
+
+background:linear-gradient(135deg,#0A84FF,#5E5CE6);
+
+color:white;
+
+font-size:15px;
+
+font-weight:700;
+
+cursor:pointer;
+
+transition:.25s;
+
+box-shadow:0 12px 30px rgba(10,132,255,.25);
+
+}
+
+.submit-btn:hover{
+
+transform:translateY(-2px);
+
+box-shadow:0 18px 40px rgba(10,132,255,.35);
+
+}
+
+@media(max-width:950px){
+
+.content-layout{
+
+grid-template-columns:1fr;
+
+}
+
+.form-grid{
+
+grid-template-columns:1fr;
+
+}
+
+}
+.audio-card{
+
+display:flex;
+
+flex-direction:column;
+
+justify-content:center;
+
+align-items:center;
+
+height:100%;
+
+text-align:center;
+
+}
+
+.audio-big-icon{
+
+font-size:60px;
+
+margin-bottom:15px;
+
+}
+
+.audio-file-name{
+
+font-size:16px;
+
+font-weight:700;
+
+word-break:break-word;
+
+margin-bottom:8px;
+
+}
+
+.audio-file-size{
+
+font-size:14px;
+
+color:#86868B;
+
+}
+
+.dragging{
+
+transform:scale(1.02);
+
+opacity:.9;
+
+}
+</style>
+</head>
+<body>
+
+<div class="page-wrapper">
+<div class="container">
+
+    <h2>📝 Add New Song</h2>
+
+    <c:if test="${not empty errorMessage}">
+        <div class="error-msg">${errorMessage}</div>
+    </c:if>
+
+    <form action="/admin/songs/add"
+      method="post"
+      enctype="multipart/form-data">
+
+    <div class="content-layout">
+
+        <div class="left-panel">
+
+            <!-- Cover Card -->
+
+            <div class="card">
+
+                <h3>Cover Image</h3>
+
+                <div id="imagePreview" class="image-preview">
+
+                    <div class="placeholder">
+
+                        <div class="placeholder-icon">🖼️</div>
+
+                        <p>No Cover Selected</p>
+
+                    </div>
+
+                </div>
+
+                <label class="upload-btn">
+
+                    <input
+                        id="imageInput"
+                        type="file"
+                        name="imageFile"
+                        accept="image/*"
+                        hidden>
+
+                    Choose Cover
+
+                </label>
+
+            </div>
+
+            <!-- Audio Card -->
+
+            <div class="card">
+
+                <h3>Audio File</h3>
+
+                <div id="audioPreview" class="audio-preview">
+
+                    <div class="placeholder">
+
+                        <div class="placeholder-icon">🎵</div>
+
+                        <p>No Audio Selected</p>
+
+                    </div>
+
+                </div>
+
+                <label class="upload-btn">
+
+                    <input
+                        id="audioInput"
+                        type="file"
+                        name="file"
+                        accept=".mp3,.wav"
+                        hidden
+                        required>
+
+                    Choose Song
+
+                </label>
+
+            </div>
+
+        </div>
+
+        <div class="right-panel">
+
+            <div class="form-grid">
+
+    <div class="form-group">
+        <label>Song Name</label>
+        <input
+            type="text"
+            name="songName"
+            placeholder="Enter Song Name"
+            required>
+    </div>
+
+    <div class="form-group">
+        <label>Singer</label>
+        <input
+            type="text"
+            name="singer"
+            placeholder="Singer Name"
+            required>
+    </div>
+
+    <div class="form-group">
+        <label>Album</label>
+        <input
+            type="text"
+            name="albumName"
+            placeholder="Album Name">
+    </div>
+
+    <div class="form-group">
+        <label>Music Director</label>
+        <input
+            type="text"
+            name="musicDirector"
+            placeholder="Music Director">
+    </div>
+
+    <div class="form-group">
+        <label>Release Date</label>
+        <input
+            type="date"
+            name="releaseDate"
+            max="9999-12-31">
+    </div>
+
+    <div class="form-group">
+        <label>Song ID</label>
+        <input
+            type="number"
+            name="songId"
+            placeholder="101"
+            required>
+    </div>
+
+    <div class="form-group">
+        <label>Song Type</label>
+
+        <select name="songType">
+            <option value="FREE">FREE</option>
+            <option value="PREMIUM">PREMIUM</option>
+        </select>
+
+    </div>
+
+    <div class="form-group">
+        <label>Status</label>
+
+        <select name="songStatus">
+            <option value="AVAILABLE">AVAILABLE</option>
+            <option value="NOTAVAILABLE">NOT AVAILABLE</option>
+        </select>
+
+    </div>
+
+</div>
+
+<div class="button-row">
+
+    <a href="/admin/songs"
+       class="cancel-btn">
+        Cancel
+    </a>
+
+    <button
+        type="submit"
+        class="submit-btn">
+
+        🎵 Upload Song
+
+    </button>
+
+</div>
+
+        </div>
+
+    </div>
+
+</form>
+</div>
+</div>
+
+<footer>
+    <p>&copy; 2025 Music Library Application. All rights reserved.</p>
+</footer>
+
+<script>
+const imageInput = document.getElementById("imageInput");
+const audioInput = document.getElementById("audioInput");
+
+const imagePreview = document.getElementById("imagePreview");
+const audioPreview = document.getElementById("audioPreview");
+
+imageInput.addEventListener("change", function () {
+
+    if (!this.files.length) {
+        imagePreview.innerHTML = `
+            <div class="placeholder">
+                <div class="placeholder-icon">🖼️</div>
+                <p>No Cover Selected</p>
+            </div>
+        `;
+        return;
+    }
+
+    const reader = new FileReader();
+
+    reader.onload = function (e) {
+
+        imagePreview.innerHTML = `
+            <img src="${e.target.result}" alt="Cover">
+        `;
+
+    };
+
+    reader.readAsDataURL(this.files[0]);
+
+});
+
+audioInput.addEventListener("change", function () {
+
+    if (!this.files.length) {
+        audioPreview.innerHTML = `
+            <div class="placeholder">
+                <div class="placeholder-icon">🎵</div>
+                <p>No Audio Selected</p>
+            </div>
+        `;
+        return;
+    }
+
+    const file = this.files[0];
+
+    const size = (file.size / (1024 * 1024)).toFixed(2);
+
+    audioPreview.innerHTML = `
+        <div class="audio-card">
+
+            <div class="audio-big-icon">
+                🎵
+            </div>
+
+            <div class="audio-file-name">
+                ${file.name}
+            </div>
+
+            <div class="audio-file-size">
+                ${size} MB
+            </div>
+
+        </div>
+    `;
+
+});
+
+document.querySelectorAll(".upload-btn").forEach(label => {
+
+    label.addEventListener("dragover", e => {
+        e.preventDefault();
+        label.classList.add("dragging");
+    });
+
+    label.addEventListener("dragleave", () => {
+        label.classList.remove("dragging");
+    });
+
+    label.addEventListener("drop", e => {
+
+        e.preventDefault();
+
+        label.classList.remove("dragging");
+
+        const input = label.querySelector("input");
+
+        input.files = e.dataTransfer.files;
+
+        input.dispatchEvent(new Event("change"));
+
+    });
+
+});
+</script>
+
+</body>
+</html>

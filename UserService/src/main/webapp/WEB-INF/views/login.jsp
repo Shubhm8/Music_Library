@@ -1,0 +1,296 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>User Login</title>
+
+<style>
+:root {
+    --bg:#FAFAFA;
+    --surface:#FFFFFF;
+    --surface-muted:#F2F2F7;
+    --text-primary:#1C1C1E;
+    --text-secondary:#3A3A3C;
+    --accent:#FF2D55;
+    --accent-hover:#e0244a;
+    --border:#E5E5EA;
+    --shadow:0 4px 14px rgba(0,0,0,0.08);
+    --radius:16px;
+    --error-bg:#ffe5ea;
+    --error-text:#c00026;
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:-apple-system,Inter,sans-serif;
+}
+
+body{
+    background:var(--bg);
+    color:var(--text-primary);
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+}
+
+footer{
+    text-align:center;
+    padding:20px 0;
+    font-size:14px;
+    color:#86868b;
+    margin-top:auto;
+}
+
+.navbar{
+    height:64px;
+    background:var(--surface);
+    padding:0 26px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    border-bottom:1px solid var(--border);
+    box-shadow:var(--shadow);
+}
+
+.navbar h2{
+    font-size:22px;
+    font-weight:700;
+}
+
+.back-btn{
+    margin-left:14px;
+    background:var(--accent);
+    color:white;
+    padding:10px 18px;
+    border-radius:12px;
+    text-decoration:none;
+    font-weight:600;
+}
+
+.back-btn:hover{
+    background:var(--accent-hover);
+}
+
+.center-wrapper{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    margin-top:60px;
+    padding:20px;
+}
+
+.card{
+    width:100%;
+    max-width:450px;
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    box-shadow:var(--shadow);
+    padding:38px;
+}
+
+h2.form-title{
+    font-size:30px;
+    font-weight:800;
+    color:var(--accent);
+    text-align:center;
+    margin-bottom:25px;
+}
+
+.form-group{
+    margin-bottom:18px;
+}
+
+label{
+    font-size:14px;
+    font-weight:600;
+    color:var(--text-secondary);
+    margin-bottom:6px;
+    display:block;
+}
+
+input{
+    width:100%;
+    padding:12px 14px;
+    border-radius:var(--radius);
+    border:1.6px solid var(--border);
+    background:var(--surface-muted);
+    font-size:15px;
+}
+
+input:focus{
+    border-color:var(--accent);
+    outline:none;
+}
+
+.btn{
+    width:100%;
+    padding:14px;
+    background:var(--accent);
+    border:none;
+    border-radius:var(--radius);
+    color:white;
+    font-size:17px;
+    font-weight:700;
+    cursor:pointer;
+    margin-top:10px;
+}
+
+.btn:hover{
+    background:var(--accent-hover);
+}
+
+.message{
+    padding:12px;
+    border-radius:var(--radius);
+    margin-bottom:15px;
+    display:none;
+    font-size:14px;
+    font-weight:600;
+}
+
+.error{
+    background:var(--error-bg);
+    color:var(--error-text);
+    border:1px solid #ffb3c1;
+}
+
+.link{
+    margin-top:18px;
+    text-align:center;
+    font-size:14px;
+}
+
+.link a{
+    color:var(--accent);
+    text-decoration:none;
+    font-weight:600;
+}
+</style>
+
+<script>
+
+const storedUser = localStorage.getItem("user");
+
+if (storedUser) {
+    try {
+        const user = JSON.parse(storedUser);
+
+        if (user && user.jwt) {
+            window.location.href = "/user/dashboard";
+        } else {
+            localStorage.removeItem("user");
+        }
+    } catch (e) {
+        localStorage.removeItem("user");
+    }
+}
+</script>
+
+</head>
+
+<body>
+
+<div class="navbar">
+    <h2>🎵 Music Library — Login</h2>
+    <a href="/" class="back-btn">Home</a>
+</div>
+
+<div class="center-wrapper">
+    <div class="card">
+
+        <h2 class="form-title">🔐 User Login</h2>
+
+        <div id="message" class="message"></div>
+
+        <form id="loginForm">
+
+            <div class="form-group">
+                <label>Username</label>
+                <input type="text" name="userName" required>
+            </div>
+
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" name="password" required>
+            </div>
+
+            <button type="submit" class="btn">Login</button>
+
+        </form>
+
+        <div class="link">
+            Don't have an account?
+            <a href="/register">Register here</a>
+        </div>
+
+    </div>
+</div>
+
+<footer>
+    &copy; 2025 Music Library Application. All rights reserved.
+</footer>
+
+<script>
+document.getElementById("loginForm").addEventListener("submit", async function(e){
+
+    e.preventDefault();
+
+    const msg = document.getElementById("message");
+
+    const data = {
+        userName: this.userName.value,
+        password: this.password.value
+    };
+
+    try{
+
+        const res = await fetch("/api/users/login", {
+            method:"POST",
+            headers:{
+                "Content-Type":"application/json"
+            },
+            body:JSON.stringify(data)
+        });
+
+        if(res.ok){
+
+            const responseData = await res.json();
+
+            document.cookie =
+                "jwtToken=" + responseData.jwt + "; path=/; max-age=36000";
+
+            const user = responseData.user;
+            user.jwt = responseData.jwt;
+
+            localStorage.setItem(
+                "user",
+                JSON.stringify(user)
+            );
+
+            window.location.href="/user/dashboard";
+
+        }else{
+
+            msg.className="message error";
+            msg.style.display="block";
+            msg.textContent=await res.text();
+
+        }
+
+    }catch(err){
+
+        msg.className="message error";
+        msg.style.display="block";
+        msg.textContent=err.message;
+
+    }
+
+});
+</script>
+
+</body>
+</html>
