@@ -16,7 +16,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.Collections;
+import java.util.List;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
@@ -34,10 +35,8 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         String path = request.getServletPath();
 
         return path.equals("/admin/login") ||
-               path.equals("/admin/register") ||
                path.equals("/admin/perform_login") ||
                path.equals("/api/admin/login") ||
-               path.equals("/api/admin/register") ||
                path.startsWith("/css/") ||
                path.startsWith("/js/") ||
                path.startsWith("/images/") ||
@@ -57,6 +56,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
         String token = null;
         String username = null;
+        String role = null;
 
         String authHeader = request.getHeader("Authorization");
 
@@ -76,17 +76,19 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         if (token != null) {
             try {
                 username = jwtUtil.extractUsername(token);
+                role = jwtUtil.extractRole(token);
             } catch (Exception e) {
                 username = null;
+                role = null;
             }
         }
 
-        if (username != null &&
+        if (username != null && "ROLE_ADMIN".equals(role) &&
             SecurityContextHolder.getContext().getAuthentication() == null &&
             jwtUtil.validateToken(token, username)) {
 
             UserDetails userDetails =
-                    new User(username, "", Collections.emptyList());
+                    new User(username, "", List.of(new SimpleGrantedAuthority("ROLE_ADMIN")));
 
             UsernamePasswordAuthenticationToken authentication =
                     new UsernamePasswordAuthenticationToken(
