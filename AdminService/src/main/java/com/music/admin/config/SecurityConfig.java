@@ -71,7 +71,11 @@ public class SecurityConfig {
                 )
 
                 .exceptionHandling(ex -> ex.authenticationEntryPoint((request, response, authException) -> {
-                    response.sendRedirect("/admin/login");
+                    if (request.getRequestURI().startsWith("/api/")) {
+                        response.sendError(401, "Unauthorized");
+                    } else {
+                        response.sendRedirect("/admin/login");
+                    }
                 }))
 
                 .sessionManagement(session ->
