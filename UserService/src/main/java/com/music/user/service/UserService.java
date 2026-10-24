@@ -25,8 +25,10 @@ public class UserService {
                 || isBlank(user.getUserName()) || isBlank(user.getEmail()) || isBlank(user.getPassword())) {
             throw new IllegalArgumentException("First name, last name, username, email, and password are required");
         }
-        if (user.getUserName().length() > 100 || user.getEmail().length() > 254 || user.getPassword().length() < 8) {
-            throw new IllegalArgumentException("Username/email is too long or password is shorter than 8 characters");
+        if (user.getUserName().length() > 100 || user.getEmail().length() > 254
+                || user.getPassword().length() < 8
+                || user.getPassword().getBytes(java.nio.charset.StandardCharsets.UTF_8).length > 72) {
+            throw new IllegalArgumentException("Username/email is too long or password must be between 8 and 72 UTF-8 bytes");
         }
         if (userRepository.findByUserName(user.getUserName()) != null) {
             throw new IllegalArgumentException("Username already exists");
