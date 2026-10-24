@@ -31,6 +31,9 @@ public class SongsService {
     @Value("${notification.recipient}")
     private String notificationRecipient;
 
+    @Value("${notification.service-url:http://localhost:8085}")
+    private String notificationServiceUrl;
+
     // ===========================
     // Add Song
     // ===========================
@@ -52,7 +55,7 @@ public class SongsService {
             headers.setContentType(MediaType.APPLICATION_JSON);
             headers.set("X-Notification-Key", notificationApiKey);
             restTemplate.postForObject(
-                    "http://localhost:8085/notify/songAdded",
+                    notificationServiceUrl + "/notify/songAdded",
                     new HttpEntity<>(request, headers),
                     String.class
             );
