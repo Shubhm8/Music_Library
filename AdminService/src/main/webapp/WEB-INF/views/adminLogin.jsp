@@ -239,7 +239,7 @@ document.getElementById("adminLoginForm").addEventListener("submit", async funct
         document.cookie =
             "jwtToken=" +
             encodeURIComponent(jwt) +
-            "; Path=/; Max-Age=86400; SameSite=Strict";
+            "; Path=/; Max-Age=3600; SameSite=Strict";
 
         console.log("LocalStorage:", localStorage.getItem("admin"));
         console.log("Cookie:", document.cookie);
