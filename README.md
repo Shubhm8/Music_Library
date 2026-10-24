@@ -56,6 +56,22 @@ Public admin registration is disabled. For a fresh database only, you can opt in
 
 The bootstrap runs only when the admin table is empty and hashes the password with BCrypt. After the first administrator is created, set ADMIN_BOOTSTRAP_ENABLED=false and remove the bootstrap credentials from the runtime environment. Existing plaintext admin passwords are upgraded to BCrypt after a successful login.
 
+## Run the full stack with Docker Compose
+
+After copying and editing .env, start the stack from the repository root:
+
+        docker compose up --build
+
+The stack starts MySQL, Eureka, NotificationService, UserService, and AdminService. The first build may take several minutes. Open the user service at http://localhost:8080, the admin service at http://localhost:8082, and Eureka at http://localhost:8761.
+
+For a fresh database, set ADMIN_BOOTSTRAP_ENABLED=true and the ADMIN_BOOTSTRAP_* values in .env before starting the stack. After the first admin is created, set the flag to false and remove those credentials. The upload volume and MySQL data volume persist across container restarts.
+
+To stop the services, run:
+
+        docker compose down
+
+This preserves named volumes. To remove the database and uploaded-media volumes too, use docker compose down -v; that permanently deletes their stored data.
+
 ## Build and run
 
 From each service directory:
