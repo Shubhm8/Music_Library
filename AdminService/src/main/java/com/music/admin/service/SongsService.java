@@ -25,6 +25,12 @@ public class SongsService {
     @Autowired
     private RestTemplate restTemplate;
 
+    @Value("${notification.api-key}")
+    private String notificationApiKey;
+
+    @Value("${notification.recipient}")
+    private String notificationRecipient;
+
     // ===========================
     // Add Song
     // ===========================
@@ -42,9 +48,12 @@ public class SongsService {
                     "Singer: " + savedSong.getSinger() + "\n" +
                     "Album: " + savedSong.getAlbumName());
 
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            headers.set("X-Notification-Key", notificationApiKey);
             restTemplate.postForObject(
                     "http://localhost:8085/notify/songAdded",
-                    request,
+                    new HttpEntity<>(request, headers),
                     String.class
             );
 
