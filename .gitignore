@@ -1,0 +1,7 @@
+target/
+*.jar
+.DS_Store
+.metadata/
+**/uploads/
+.env
+.vscode/
