@@ -87,7 +87,7 @@ This application includes two roles with separate capabilities: **User** and **A
 📧 Email: **shubhm8335@gmail.com**
 
 ---
-=======
+
 🎵 Music Library – Microservices Based Application
 
 A complete microservices-based Music Library System 
@@ -176,4 +176,4 @@ Shubh Mishra
 
 ---
 
->>>>>>> 204578d0cf4299e96881d3ff44c99edb1bb31d8b
+
