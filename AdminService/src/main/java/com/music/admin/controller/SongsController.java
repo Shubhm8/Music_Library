@@ -1,5 +1,4 @@
 package com.music.admin.controller;
-import org.springframework.data.domain.Page;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
@@ -80,8 +79,7 @@ public class SongsController {
            return "addSong"; 
            
         } catch (Exception e) {
-            e.printStackTrace();
-            model.addAttribute("errorMessage", "System Error: " + e.getMessage());
+            model.addAttribute("errorMessage", "Unable to save song. Verify the song details and uploaded media format/size.");
             return "addSong";
         }
     }
@@ -181,8 +179,10 @@ public class SongsController {
 
             songsService.updateSong(song.getLibraryId(), song);
 
+        } catch (IllegalArgumentException e) {
+            return "redirect:/admin/songs?error=invalid-upload";
         } catch (IOException e) {
-            e.printStackTrace();
+            return "redirect:/admin/songs?error=upload-failed";
         }
 
         return "redirect:/admin/songs";
