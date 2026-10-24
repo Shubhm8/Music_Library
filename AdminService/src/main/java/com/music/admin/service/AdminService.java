@@ -47,6 +47,10 @@ public class AdminService {
                 || admin.getEmail() == null || admin.getEmail().isBlank()) {
             throw new IllegalArgumentException("Admin name, username, email, and password are required");
         }
+        if (admin.getPassword().length() < 12
+                || admin.getPassword().getBytes(java.nio.charset.StandardCharsets.UTF_8).length > 72) {
+            throw new IllegalArgumentException("Admin password must be at least 12 characters and at most 72 UTF-8 bytes");
+        }
 
         if (adminRepository.existsByUserName(admin.getUserName())) {
             throw new IllegalArgumentException("Admin username already exists");
