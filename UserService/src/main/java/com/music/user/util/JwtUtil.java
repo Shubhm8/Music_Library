@@ -23,7 +23,7 @@ public class JwtUtil {
     public JwtUtil(@Value("${jwt.secret}") String secret) {
         this.secretKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
     }
-    private static final long EXPIRATION_TIME = 1000L * 60 * 60 * 24 * 7;
+    private static final long EXPIRATION_TIME = 1000L * 60 * 60 * 10;
 
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
