@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 # 🎵 Music Library – Microservices Based Application
 
 A complete microservices-based **Music Library System** 
