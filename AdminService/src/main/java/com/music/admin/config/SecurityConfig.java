@@ -64,7 +64,8 @@ public class SecurityConfig {
                                 "/h2-console/**"
                         ).permitAll()
 
-                        .requestMatchers("/api/songs/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/songs/**").permitAll()
+                        .requestMatchers(HttpMethod.HEAD, "/api/songs/**").permitAll()
 
                         .requestMatchers("/admin/register", "/api/admin/register").hasRole("ADMIN")
 
