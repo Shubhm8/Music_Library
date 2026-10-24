@@ -1,71 +1,79 @@
 package com.music.user.service;
 
-import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.music.user.entity.Playlist;
 import com.music.user.entity.User;
 import com.music.user.repository.PlaylistRepository;
 import com.music.user.repository.UserRepository;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class PlaylistService {
 
-    @Autowired
-    private PlaylistRepository playlistRepository;
+    private final PlaylistRepository playlistRepository;
+    private final UserRepository userRepository;
 
-    @Autowired
-    private UserRepository userRepository;
+    public PlaylistService(PlaylistRepository playlistRepository, UserRepository userRepository) {
+        this.playlistRepository = playlistRepository;
+        this.userRepository = userRepository;
+    }
 
-    // 1. Create a new Playlist
-    public Playlist createPlaylist(Integer userId, String playlistName) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+    public Playlist createPlaylist(String username, String playlistName) {
+        if (playlistName == null || playlistName.isBlank() || playlistName.length() > 100) {
+            throw new IllegalArgumentException("Playlist name must be between 1 and 100 characters");
+        }
+        User user = userRepository.findByUserName(username);
+        if (user == null || !"ACTIVE".equalsIgnoreCase(user.getStatus())) {
+            throw new IllegalArgumentException("Active user account not found");
+        }
+        return playlistRepository.save(new Playlist(playlistName.trim(), user));
+    }
 
-        Playlist playlist = new Playlist(playlistName, user);
+    public List<Playlist> getUserPlaylists(String username, Integer requestedUserId) {
+        User owner = userRepository.findByUserName(username);
+        if (owner == null || !owner.getUserId().equals(requestedUserId)) {
+            throw new org.springframework.security.access.AccessDeniedException("You can only view your own playlists");
+        }
+        return playlistRepository.findByUser(owner);
+    }
+
+    public Playlist addSongToPlaylist(String username, Integer playlistId, String songId) {
+        Playlist playlist = getOwnedPlaylist(username, playlistId);
+        if (songId == null || songId.isBlank() || songId.length() > 100) {
+            throw new IllegalArgumentException("Invalid song ID");
+        }
+        if (!playlist.getSongIds().contains(songId)) {
+            playlist.getSongIds().add(songId);
+        }
         return playlistRepository.save(playlist);
     }
 
-    // 2. Get all Playlists for a User
-    public List<Playlist> getUserPlaylists(Integer userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-        return playlistRepository.findByUser(user);
-    }
-
-    // 3. Add a Song to a Playlist
-    public Playlist addSongToPlaylist(Integer playlistId, String songId) {
-        Playlist playlist = playlistRepository.findById(playlistId)
-                .orElseThrow(() -> new RuntimeException("Playlist not found"));
-        
-        // Prevent duplicates
-        if (!playlist.getSongIds().contains(songId)) {
-            playlist.getSongIds().add(songId);
-            return playlistRepository.save(playlist);
-        }
-        return playlist;
-    }
-
-    // 4. Remove a Song from a Playlist
-    public Playlist removeSongFromPlaylist(Integer playlistId, String songId) {
-        Playlist playlist = playlistRepository.findById(playlistId)
-                .orElseThrow(() -> new RuntimeException("Playlist not found"));
-        
+    public Playlist removeSongFromPlaylist(String username, Integer playlistId, String songId) {
+        Playlist playlist = getOwnedPlaylist(username, playlistId);
         playlist.getSongIds().remove(songId);
         return playlistRepository.save(playlist);
     }
 
-    // 5. Delete a Playlist
-    public void deletePlaylist(Integer playlistId) {
-        playlistRepository.deleteById(playlistId);
+    public void deletePlaylist(String username, Integer playlistId) {
+        playlistRepository.delete(getOwnedPlaylist(username, playlistId));
     }
- // 6. Rename Playlist
-    public Playlist renamePlaylist(Integer playlistId, String newName) {
-        Playlist playlist = playlistRepository.findById(playlistId)
-                .orElseThrow(() -> new RuntimeException("Playlist not found"));
-        
-        playlist.setPlaylistName(newName);
+
+    public Playlist renamePlaylist(String username, Integer playlistId, String newName) {
+        if (newName == null || newName.isBlank() || newName.length() > 100) {
+            throw new IllegalArgumentException("Playlist name must be between 1 and 100 characters");
+        }
+        Playlist playlist = getOwnedPlaylist(username, playlistId);
+        playlist.setPlaylistName(newName.trim());
         return playlistRepository.save(playlist);
+    }
+
+    private Playlist getOwnedPlaylist(String username, Integer playlistId) {
+        Playlist playlist = playlistRepository.findById(playlistId)
+                .orElseThrow(() -> new IllegalArgumentException("Playlist not found"));
+        if (playlist.getUser() == null || !username.equals(playlist.getUser().getUserName())) {
+            throw new org.springframework.security.access.AccessDeniedException("You do not own this playlist");
+        }
+        return playlist;
     }
 }
