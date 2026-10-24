@@ -11,7 +11,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: java-ci-${{ github.workflow }}-${{ github.ref }}
+  group: java-ci-${{ github.workflow }}-${{ github.head_ref || github.ref }}
   cancel-in-progress: true
 
 jobs:
