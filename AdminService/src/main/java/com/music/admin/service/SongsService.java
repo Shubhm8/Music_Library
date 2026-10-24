@@ -7,6 +7,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 
 import java.util.HashMap;
 import java.util.List;
@@ -30,7 +34,7 @@ public class SongsService {
 
         try {
             Map<String, String> request = new HashMap<>();
-            request.put("to", "shubhm8335@gmail.com");
+            request.put("to", notificationRecipient);
             request.put("subject", "New Song Added: " + savedSong.getSongName());
             request.put("message",
                     "A new song was added to the Music Library!\n\n" +
