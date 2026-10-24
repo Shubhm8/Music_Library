@@ -1,5 +1,4 @@
 package com.music.admin.controller;
-import org.springframework.data.domain.Page;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
@@ -9,7 +8,9 @@ import com.music.admin.mapper.SongMapper;
 import java.util.stream.Collectors; 
 import java.nio.file.*;
 import java.io.IOException;
-import java.io.File; // Added for File checks
+import java.io.File;
+import java.util.Set;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -56,20 +57,13 @@ public class SongsController {
                 directory.mkdirs();
             }
 
-            // 1. Save Audio
             if (audioFile != null && !audioFile.isEmpty()) {
-                String audioName = System.currentTimeMillis() + "_" + audioFile.getOriginalFilename();
-                Path audioPath = Paths.get(uploadDir, audioName);
-                Files.copy(audioFile.getInputStream(), audioPath, StandardCopyOption.REPLACE_EXISTING); 
-                song.setAudioPath("/uploads/" + audioName);
+                song.setAudioPath(storeUpload(audioFile, true));
             }
 
             // 2. Save Image
             if (imageFile != null && !imageFile.isEmpty()) {
-                String imgName = System.currentTimeMillis() + "_" + imageFile.getOriginalFilename();
-                Path imgPath = Paths.get(uploadDir, imgName);
-                Files.copy(imageFile.getInputStream(), imgPath, StandardCopyOption.REPLACE_EXISTING); 
-                song.setImagePath("/uploads/" + imgName);
+                song.setImagePath(storeUpload(imageFile, false));
             } else {
                 song.setImagePath(null);
             } 
@@ -85,8 +79,7 @@ public class SongsController {
            return "addSong"; 
            
         } catch (Exception e) {
-            e.printStackTrace();
-            model.addAttribute("errorMessage", "System Error: " + e.getMessage());
+            model.addAttribute("errorMessage", "Unable to save song. Verify the song details and uploaded media format/size.");
             return "addSong";
         }
     }
@@ -141,7 +134,7 @@ public class SongsController {
                            .collect(Collectors.toList());
     }
     
-    @GetMapping("/admin/songs/delete")
+    @PostMapping("/admin/songs/delete")
     public String deleteSong(@RequestParam Integer id) {
         songsService.deleteSong(id);
         return "redirect:/admin/songs";     
@@ -177,25 +170,19 @@ public class SongsController {
             }
             
             if (audioFile != null && !audioFile.isEmpty()) {
-                String audioName = System.currentTimeMillis() + "_" + audioFile.getOriginalFilename();
-                Path audioPath = Paths.get(uploadDir, audioName);
-                Files.copy(audioFile.getInputStream(), audioPath, StandardCopyOption.REPLACE_EXISTING);
-
-                song.setAudioPath("/uploads/" + audioName);
+                song.setAudioPath(storeUpload(audioFile, true));
             }
 
             if (imageFile != null && !imageFile.isEmpty()) {
-                String imgName = System.currentTimeMillis() + "_" + imageFile.getOriginalFilename();
-                Path imgPath = Paths.get(uploadDir, imgName);
-                Files.copy(imageFile.getInputStream(), imgPath, StandardCopyOption.REPLACE_EXISTING);
-                
-                song.setImagePath("/uploads/" + imgName);
+                song.setImagePath(storeUpload(imageFile, false));
             } 
 
             songsService.updateSong(song.getLibraryId(), song);
 
+        } catch (IllegalArgumentException e) {
+            return "redirect:/admin/songs?error=invalid-upload";
         } catch (IOException e) {
-            e.printStackTrace();
+            return "redirect:/admin/songs?error=upload-failed";
         }
 
         return "redirect:/admin/songs";
@@ -211,4 +198,52 @@ public class SongsController {
                            .map(SongMapper::toDto)
                            .collect(Collectors.toList());
     }
+    private String storeUpload(MultipartFile file, boolean audio) throws IOException {
+        if (file == null || file.isEmpty()) {
+            throw new IllegalArgumentException("Uploaded file is empty");
+        }
+
+        long maxSize = audio ? 50L * 1024 * 1024 : 5L * 1024 * 1024;
+        if (file.getSize() > maxSize) {
+            throw new IllegalArgumentException("Uploaded file exceeds the allowed size");
+        }
+
+        String contentType = file.getContentType();
+        Set<String> allowedTypes = audio
+                ? Set.of("audio/mpeg", "audio/mp3", "audio/mp4", "audio/wav", "audio/x-wav", "audio/ogg")
+                : Set.of("image/jpeg", "image/png", "image/webp", "image/gif");
+        if (contentType == null || !allowedTypes.contains(contentType.toLowerCase())) {
+            throw new IllegalArgumentException("Unsupported " + (audio ? "audio" : "image") + " content type");
+        }
+        try (var input = file.getInputStream()) {
+            if (!hasValidSignature(input.readNBytes(12), contentType.toLowerCase())) {
+                throw new IllegalArgumentException("Uploaded file content does not match its declared media type");
+            }
+        }
+
+        String extension = switch (contentType.toLowerCase()) {
+            case "audio/mpeg", "audio/mp3" -> ".mp3";
+            case "audio/mp4" -> ".m4a";
+            case "audio/wav", "audio/x-wav" -> ".wav";
+            case "audio/ogg" -> ".ogg";
+            case "image/jpeg" -> ".jpg";
+            case "image/png" -> ".png";
+            case "image/webp" -> ".webp";
+            case "image/gif" -> ".gif";
+            default -> throw new IllegalArgumentException("Unsupported file type");
+        };
+
+        Path uploadDirectory = Paths.get(System.getProperty("user.dir"), "uploads").toAbsolutePath().normalize();
+        Files.createDirectories(uploadDirectory);
+        String fileName = UUID.randomUUID() + extension;
+        Path destination = uploadDirectory.resolve(fileName).normalize();
+        if (!destination.getParent().equals(uploadDirectory)) {
+            throw new IllegalArgumentException("Invalid upload path");
+        }
+        try (var input = file.getInputStream()) {
+            Files.copy(input, destination);
+        }
+        return "/uploads/" + fileName;
+    }
+
 }

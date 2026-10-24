@@ -45,13 +45,8 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/",
                                 "/login",
-                                "/register",
-
                                 "/admin/login",
-                                "/admin/register",
-
                                 "/api/admin/login",
-                                "/api/admin/register",
 
                                 "/css/**",
                                 "/js/**",
@@ -71,7 +66,9 @@ public class SecurityConfig {
 
                         .requestMatchers("/api/songs/**").permitAll()
 
-                        .anyRequest().authenticated()
+                        .requestMatchers("/admin/register", "/api/admin/register").hasRole("ADMIN")
+
+                        .anyRequest().hasRole("ADMIN")
                 )
 
                 .exceptionHandling(ex -> ex.authenticationEntryPoint((request, response, authException) -> {

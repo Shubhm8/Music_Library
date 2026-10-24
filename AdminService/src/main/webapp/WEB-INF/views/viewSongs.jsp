@@ -580,7 +580,16 @@ opacity:1;
         document.getElementById("deleteText").innerHTML =
             'Are you sure you want to delete <b>' + name + '</b>?';
         document.getElementById("confirmDelete").onclick = function() {
-            window.location.href = "/admin/songs/delete?id=" + id;
+            const form = document.createElement("form");
+            form.method = "POST";
+            form.action = "/admin/songs/delete";
+            const idField = document.createElement("input");
+            idField.type = "hidden";
+            idField.name = "id";
+            idField.value = id;
+            form.appendChild(idField);
+            document.body.appendChild(form);
+            form.submit();
         };
     }
 

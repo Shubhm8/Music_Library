@@ -1,0 +1,77 @@
+name: Java CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - security/**
+
+permissions:
+  contents: read
+
+concurrency:
+  group: java-ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Test ${{ matrix.service }}
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_ROOT_PASSWORD: test-root-password
+          MYSQL_DATABASE: Music_Library
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -uroot -ptest-root-password"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+    env:
+      USER_DATASOURCE_URL: jdbc:mysql://127.0.0.1:3306/Music_Library
+      USER_DATASOURCE_USERNAME: root
+      USER_DATASOURCE_PASSWORD: test-root-password
+      ADMIN_DATASOURCE_URL: jdbc:mysql://127.0.0.1:3306/Music_Library
+      ADMIN_DATASOURCE_USERNAME: root
+      ADMIN_DATASOURCE_PASSWORD: test-root-password
+      NOTIFICATION_DATASOURCE_URL: jdbc:mysql://127.0.0.1:3306/Music_Library
+      NOTIFICATION_DATASOURCE_USERNAME: root
+      NOTIFICATION_DATASOURCE_PASSWORD: test-root-password
+      JWT_SECRET: ci-only-jwt-secret-0123456789abcdef0123456789
+      NOTIFICATION_API_KEY: ci-only-notification-key
+      NOTIFICATION_RECIPIENT: ci@example.com
+      MAIL_USERNAME: ""
+      MAIL_PASSWORD: ""
+      MAIL_FROM: ci@example.com
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - service: UserService
+            java: "21"
+          - service: AdminService
+            java: "21"
+          - service: NotificationService
+            java: "17"
+          - service: EurekaServer
+            java: "21"
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: ${{ matrix.java }}
+          cache: maven
+          cache-dependency-path: ${{ matrix.service }}/pom.xml
+
+      - name: Run tests and package
+        working-directory: ${{ matrix.service }}
+        run: mvn --batch-mode --no-transfer-progress verify

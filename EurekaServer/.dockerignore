@@ -1,0 +1,10 @@
+.git
+.metadata
+.idea
+.DS_Store
+target
+.env
+.env.*
+!.env.example
+uploads
+*.log

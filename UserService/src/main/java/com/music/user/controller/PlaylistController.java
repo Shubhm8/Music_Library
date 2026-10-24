@@ -1,53 +1,53 @@
 package com.music.user.controller;
 
-import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
 import com.music.user.entity.Playlist;
 import com.music.user.service.PlaylistService;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/playlists")
-@CrossOrigin(origins = "*") // Allow frontend to access
 public class PlaylistController {
 
-    @Autowired
-    private PlaylistService playlistService;
+    private final PlaylistService playlistService;
 
-    // CREATE Playlist
+    public PlaylistController(PlaylistService playlistService) {
+        this.playlistService = playlistService;
+    }
+
     @PostMapping("/create")
-    public Playlist createPlaylist(@RequestParam Integer userId, @RequestParam String name) {
-        return playlistService.createPlaylist(userId, name);
+    public Playlist createPlaylist(Authentication authentication, @RequestParam String name) {
+        return playlistService.createPlaylist(authentication.getName(), name);
     }
 
-    // GET User's Playlists
     @GetMapping("/user/{userId}")
-    public List<Playlist> getUserPlaylists(@PathVariable Integer userId) {
-        return playlistService.getUserPlaylists(userId);
+    public List<Playlist> getUserPlaylists(Authentication authentication, @PathVariable Integer userId) {
+        return playlistService.getUserPlaylists(authentication.getName(), userId);
     }
 
-    // ADD Song to Playlist
     @PostMapping("/{playlistId}/add/{songId}")
-    public Playlist addSong(@PathVariable Integer playlistId, @PathVariable String songId) {
-        return playlistService.addSongToPlaylist(playlistId, songId);
+    public Playlist addSong(Authentication authentication, @PathVariable Integer playlistId,
+                            @PathVariable String songId) {
+        return playlistService.addSongToPlaylist(authentication.getName(), playlistId, songId);
     }
 
-    // REMOVE Song from Playlist
     @DeleteMapping("/{playlistId}/remove/{songId}")
-    public Playlist removeSong(@PathVariable Integer playlistId, @PathVariable String songId) {
-        return playlistService.removeSongFromPlaylist(playlistId, songId);
+    public Playlist removeSong(Authentication authentication, @PathVariable Integer playlistId,
+                               @PathVariable String songId) {
+        return playlistService.removeSongFromPlaylist(authentication.getName(), playlistId, songId);
     }
 
-    // DELETE Playlist
     @DeleteMapping("/{id}")
-    public String deletePlaylist(@PathVariable Integer id) {
-        playlistService.deletePlaylist(id);
+    public String deletePlaylist(Authentication authentication, @PathVariable Integer id) {
+        playlistService.deletePlaylist(authentication.getName(), id);
         return "Playlist deleted successfully";
     }
- // UPDATE Playlist Name
+
     @PutMapping("/{id}")
-    public Playlist updatePlaylist(@PathVariable Integer id, @RequestParam String name) {
-        return playlistService.renamePlaylist(id, name);
+    public Playlist updatePlaylist(Authentication authentication, @PathVariable Integer id,
+                                   @RequestParam String name) {
+        return playlistService.renamePlaylist(authentication.getName(), id, name);
     }
 }

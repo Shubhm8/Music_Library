@@ -2,6 +2,7 @@ package com.music.admin.entity;
 
 import java.time.LocalDateTime;
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
 @Table(name = "admin")
@@ -18,6 +19,7 @@ public class Admin {
     @Column(name = "user_name", nullable = false, unique = true)
     private String userName;
     
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Column(nullable = false)
     private String password;
     

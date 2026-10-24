@@ -1,0 +1,97 @@
+services:
+  mysql:
+    image: mysql:8.4
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?Set MYSQL_ROOT_PASSWORD in .env}
+      MYSQL_DATABASE: Music_Library
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uroot", "-p${MYSQL_ROOT_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
+  eureka:
+    build:
+      context: ./EurekaServer
+    restart: unless-stopped
+    ports:
+      - "8761:8761"
+
+  notification-service:
+    build:
+      context: ./NotificationService
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      PORT: 8085
+      NOTIFICATION_DATASOURCE_URL: jdbc:mysql://mysql:3306/Music_Library
+      NOTIFICATION_DATASOURCE_USERNAME: root
+      NOTIFICATION_DATASOURCE_PASSWORD: ${MYSQL_ROOT_PASSWORD:?Set MYSQL_ROOT_PASSWORD in .env}
+      NOTIFICATION_API_KEY: ${NOTIFICATION_API_KEY:?Set NOTIFICATION_API_KEY in .env}
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka:8761/eureka/
+    depends_on:
+      mysql:
+        condition: service_healthy
+      eureka:
+        condition: service_started
+    ports:
+      - "8085:8085"
+
+  user-service:
+    build:
+      context: ./UserService
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      PORT: 8080
+      USER_DATASOURCE_URL: jdbc:mysql://mysql:3306/Music_Library
+      USER_DATASOURCE_USERNAME: root
+      USER_DATASOURCE_PASSWORD: ${MYSQL_ROOT_PASSWORD:?Set MYSQL_ROOT_PASSWORD in .env}
+      JWT_SECRET: ${JWT_SECRET:?Set JWT_SECRET in .env}
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka:8761/eureka/
+    depends_on:
+      mysql:
+        condition: service_healthy
+      eureka:
+        condition: service_started
+    ports:
+      - "8080:8080"
+
+  admin-service:
+    build:
+      context: ./AdminService
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      PORT: 8082
+      ADMIN_DATASOURCE_URL: jdbc:mysql://mysql:3306/Music_Library
+      ADMIN_DATASOURCE_USERNAME: root
+      ADMIN_DATASOURCE_PASSWORD: ${MYSQL_ROOT_PASSWORD:?Set MYSQL_ROOT_PASSWORD in .env}
+      JWT_SECRET: ${JWT_SECRET:?Set JWT_SECRET in .env}
+      NOTIFICATION_API_KEY: ${NOTIFICATION_API_KEY:?Set NOTIFICATION_API_KEY in .env}
+      NOTIFICATION_RECIPIENT: ${NOTIFICATION_RECIPIENT:?Set NOTIFICATION_RECIPIENT in .env}
+      NOTIFICATION_SERVICE_URL: http://notification-service:8085
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka:8761/eureka/
+    depends_on:
+      mysql:
+        condition: service_healthy
+      eureka:
+        condition: service_started
+      notification-service:
+        condition: service_started
+    ports:
+      - "8082:8082"
+    volumes:
+      - uploads_data:/app/uploads
+
+volumes:
+  mysql_data:
+  uploads_data:

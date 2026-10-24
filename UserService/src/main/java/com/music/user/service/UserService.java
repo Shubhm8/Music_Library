@@ -21,8 +21,27 @@ public class UserService {
 
     // 1. Add User 
     public User addUser(User user) {
+        if (user == null || isBlank(user.getFirstName()) || isBlank(user.getLastName())
+                || isBlank(user.getUserName()) || isBlank(user.getEmail()) || isBlank(user.getPassword())) {
+            throw new IllegalArgumentException("First name, last name, username, email, and password are required");
+        }
+        if (user.getUserName().length() > 100 || user.getEmail().length() > 254
+                || user.getPassword().length() < 8
+                || user.getPassword().getBytes(java.nio.charset.StandardCharsets.UTF_8).length > 72) {
+            throw new IllegalArgumentException("Username/email is too long or password must be between 8 and 72 UTF-8 bytes");
+        }
+        if (userRepository.findByUserName(user.getUserName()) != null) {
+            throw new IllegalArgumentException("Username already exists");
+        }
+        user.setUserId(null);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setStatus("ACTIVE");
+        user.setPlaylists(new java.util.ArrayList<>());
         return userRepository.save(user);
+    }
+
+    private boolean isBlank(String value) {
+        return value == null || value.isBlank();
     }
     public List<User> getAllUsers() {
         return userRepository.findAll();
