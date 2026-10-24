@@ -215,6 +215,11 @@ public class SongsController {
         if (contentType == null || !allowedTypes.contains(contentType.toLowerCase())) {
             throw new IllegalArgumentException("Unsupported " + (audio ? "audio" : "image") + " content type");
         }
+        try (var input = file.getInputStream()) {
+            if (!hasValidSignature(input.readNBytes(12), contentType.toLowerCase())) {
+                throw new IllegalArgumentException("Uploaded file content does not match its declared media type");
+            }
+        }
 
         String extension = switch (contentType.toLowerCase()) {
             case "audio/mpeg", "audio/mp3" -> ".mp3";
