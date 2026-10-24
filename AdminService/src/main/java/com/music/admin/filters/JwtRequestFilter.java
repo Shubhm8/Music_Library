@@ -1,6 +1,7 @@
 package com.music.admin.filters;
 
 import com.music.admin.util.JwtUtil;
+import com.music.admin.repository.AdminRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -24,6 +25,9 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
     @Autowired
     private JwtUtil jwtUtil;
+
+    @Autowired
+    private AdminRepository adminRepository;
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
@@ -85,7 +89,9 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
         if (username != null && "ROLE_ADMIN".equals(role) &&
             SecurityContextHolder.getContext().getAuthentication() == null &&
-            jwtUtil.validateToken(token, username)) {
+            jwtUtil.validateToken(token, username) &&
+            adminRepository.findByUserName(username)
+                    .filter(admin -> "YES".equalsIgnoreCase(admin.getAdminStatus())).isPresent()) {
 
             UserDetails userDetails =
                     new User(username, "", List.of(new SimpleGrantedAuthority("ROLE_ADMIN")));

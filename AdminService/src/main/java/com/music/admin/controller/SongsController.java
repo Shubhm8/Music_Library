@@ -246,4 +246,30 @@ public class SongsController {
         return "/uploads/" + fileName;
     }
 
+    private boolean hasValidSignature(byte[] header, String contentType) {
+        if (header == null) {
+            return false;
+        }
+        return switch (contentType) {
+            case "image/jpeg" -> header.length >= 3
+                    && (header[0] & 0xFF) == 0xFF && (header[1] & 0xFF) == 0xD8 && (header[2] & 0xFF) == 0xFF;
+            case "image/png" -> header.length >= 8
+                    && (header[0] & 0xFF) == 0x89 && header[1] == 0x50 && header[2] == 0x4E && header[3] == 0x47
+                    && header[4] == 0x0D && header[5] == 0x0A && header[6] == 0x1A && header[7] == 0x0A;
+            case "image/webp" -> header.length >= 12 && ascii(header, 0, 4).equals("RIFF") && ascii(header, 8, 4).equals("WEBP");
+            case "image/gif" -> header.length >= 6 && (ascii(header, 0, 6).equals("GIF87a") || ascii(header, 0, 6).equals("GIF89a"));
+            case "audio/mpeg", "audio/mp3" -> header.length >= 3
+                    && (ascii(header, 0, 3).equals("ID3")
+                    || ((header[0] & 0xFF) == 0xFF && (header[1] & 0xE0) == 0xE0));
+            case "audio/wav", "audio/x-wav" -> header.length >= 12 && ascii(header, 0, 4).equals("RIFF") && ascii(header, 8, 4).equals("WAVE");
+            case "audio/ogg" -> header.length >= 4 && ascii(header, 0, 4).equals("OggS");
+            case "audio/mp4" -> header.length >= 8 && ascii(header, 4, 4).equals("ftyp");
+            default -> false;
+        };
+    }
+
+    private String ascii(byte[] value, int offset, int length) {
+        return new String(value, offset, length, java.nio.charset.StandardCharsets.US_ASCII);
+    }
+
 }

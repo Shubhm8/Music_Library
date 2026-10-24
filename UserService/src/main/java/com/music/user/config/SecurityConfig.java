@@ -38,7 +38,8 @@ public class SecurityConfig {
                 .requestMatchers("/api/users/login", "/api/users/register").permitAll()
                 .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                 .requestMatchers("/api/users/all", "/api/users/status/**").hasRole("ADMIN")
-                .requestMatchers("/api/songs/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/songs/**").permitAll()
+                .requestMatchers(HttpMethod.HEAD, "/api/songs/**").permitAll()
                 .anyRequest().authenticated())
             .exceptionHandling(ex -> ex.authenticationEntryPoint((request, response, exception) -> {
                 String accept = request.getHeader("Accept");
