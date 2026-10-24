@@ -261,7 +261,7 @@ document.getElementById("loginForm").addEventListener("submit", async function(e
             const responseData = await res.json();
 
             document.cookie =
-                "jwtToken=" + responseData.jwt + "; path=/; max-age=36000";
+                "jwtToken=" + responseData.jwt + "; path=/; max-age=36000; SameSite=Strict";
 
             const user = responseData.user;
             user.jwt = responseData.jwt;
