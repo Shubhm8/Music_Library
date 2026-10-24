@@ -24,11 +24,19 @@ public class AdminService {
         }
 
         Optional<Admin> adminRecord = adminRepository.findByUserName(userName);
-        return adminRecord
+        Admin admin = adminRecord
                 .filter(candidate -> candidate.getPassword() != null
-                        && passwordEncoder.matches(password, candidate.getPassword())
-                        && "YES".equalsIgnoreCase(candidate.getAdminStatus()))
+                        && "YES".equalsIgnoreCase(candidate.getAdminStatus())
+                        && (passwordEncoder.matches(password, candidate.getPassword())
+                            || candidate.getPassword().equals(password)))
                 .orElseThrow(() -> new IllegalArgumentException("Invalid username or password"));
+
+        if (!passwordEncoder.matches(password, admin.getPassword())) {
+            admin.setPassword(passwordEncoder.encode(password));
+            admin = adminRepository.save(admin);
+        }
+
+        return admin;
     }
 
     public Admin addAdmin(Admin admin) {
