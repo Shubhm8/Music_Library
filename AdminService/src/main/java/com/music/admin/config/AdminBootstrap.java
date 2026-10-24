@@ -39,7 +39,8 @@ public class AdminBootstrap implements CommandLineRunner {
             return;
         }
         if (isBlank(username) || isBlank(password) || isBlank(adminName) || isBlank(email)
-                || password.length() < 12) {
+                || password.length() < 12
+                || password.getBytes(java.nio.charset.StandardCharsets.UTF_8).length > 72) {
             throw new IllegalStateException(
                     "Initial admin bootstrap is enabled but credentials are missing or password is shorter than 12 characters");
         }
