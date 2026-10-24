@@ -27,8 +27,8 @@ public class AdminService {
         Admin admin = adminRecord
                 .filter(candidate -> candidate.getPassword() != null
                         && "YES".equalsIgnoreCase(candidate.getAdminStatus())
-                        && (passwordEncoder.matches(password, candidate.getPassword())
-                            || candidate.getPassword().equals(password)))
+                        && (candidate.getPassword().equals(password)
+                            || passwordEncoder.matches(password, candidate.getPassword())))
                 .orElseThrow(() -> new IllegalArgumentException("Invalid username or password"));
 
         if (!passwordEncoder.matches(password, admin.getPassword())) {
