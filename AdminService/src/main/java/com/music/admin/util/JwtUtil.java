@@ -24,7 +24,7 @@ public class JwtUtil {
         this.secretKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
     }
 
-    private static final long EXPIRATION_TIME = 1000L * 60 * 60 * 24 * 7;
+    private static final long EXPIRATION_TIME = 1000L * 60 * 60;
 
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
@@ -53,6 +53,7 @@ public class JwtUtil {
 
     public String generateToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
+        claims.put("role", "ROLE_ADMIN");
         return createToken(claims, userDetails.getUsername());
     }
     
