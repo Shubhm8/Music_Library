@@ -136,7 +136,7 @@ public class SongsController {
                            .collect(Collectors.toList());
     }
     
-    @GetMapping("/admin/songs/delete")
+    @PostMapping("/admin/songs/delete")
     public String deleteSong(@RequestParam Integer id) {
         songsService.deleteSong(id);
         return "redirect:/admin/songs";     
